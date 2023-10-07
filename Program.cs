@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using StandCLI.handlers;
+﻿using StandCLI.handlers;
 
 namespace StandCLI
 {
@@ -30,6 +29,8 @@ namespace StandCLI
 
         public static string CurrentFullStandVersion = "";
         public static string CurrentStandDllVersion = "";
+
+        public static string CurrentStandCLIVersion = "2.0.0";
 
         static void Main(string[] args)
         {
@@ -125,7 +126,7 @@ namespace StandCLI
 
             skip:
                 Console.Clear();
-                Console.Title = "Stand CLI version " + "1.0";
+                Console.Title = "Stand CLI version " + CurrentStandCLIVersion;
             
         }
 

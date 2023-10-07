@@ -74,8 +74,12 @@ namespace StandCLI.handlers
             switch (optionIndex)
             {
                 case 0:
-                    MenuOptions("StandFile");
+                    string inject = InjectMethods.Inject();
+                    Console.Clear();
+                    Console.WriteLine(inject);
                     Console.ReadLine();
+                    Console.Clear();
+                    MenuOptions("MainMenu");
                     break;
                 case 1:
                     selectedOption = 0;

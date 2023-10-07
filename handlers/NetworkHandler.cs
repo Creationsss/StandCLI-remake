@@ -70,12 +70,13 @@ namespace StandCLI.handlers
             return null;
         }
 
-        public static async Task<bool> DownloadStandDll(string standDllVersion, string destinationPath)
+        public static async Task<bool> DownloadStandDll(string standDllVersion, string destinationPath, bool skipPrint = false)
         {
             string downloadUrl = $"https://stand.gg/Stand {standDllVersion}.dll";
 
             if (File.Exists(destinationPath))
             {
+                if(skipPrint) return true;
                 if (Program.UsingStandVersion() == standDllVersion)
                 {
                     Console.WriteLine($"version {standDllVersion} is already in use");
@@ -98,8 +99,11 @@ namespace StandCLI.handlers
 
                 using (HttpClient httpClient = new HttpClient())
                 {
-                    Console.Clear();
-                    Console.WriteLine($"Downloading version {standDllVersion}\n ");
+                    if (!skipPrint)
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"Downloading version {standDllVersion}\n ");
+                    }
 
                     using HttpResponseMessage response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
                     if (response.IsSuccessStatusCode)
@@ -122,7 +126,10 @@ namespace StandCLI.handlers
                                         totalBytesRead += bytesRead;
                                         var percentage = (double)totalBytesRead / totalFileSize.Value;
 
-                                        Console.Write($"\rProgress: {percentage:P0}".PadRight(Console.WindowWidth - 1));
+                                        if (!skipPrint)
+                                        {
+                                            Console.Write($"\rProgress: {percentage:P0}".PadRight(Console.WindowWidth - 1));
+                                        }
                                     }
                                 }
                             }
@@ -150,7 +157,10 @@ namespace StandCLI.handlers
                     return false;
                 }
 
-                Console.WriteLine($"\nDownloaded version {standDllVersion} to {destinationPath}\n");
+                if (!skipPrint)
+                {
+                    Console.WriteLine($"\nDownloaded version {standDllVersion} to {destinationPath}\n");
+                }
                 return true;
             }
             catch (Exception ex)
