@@ -64,6 +64,17 @@ namespace StandCLI.handlers
 
             } while (key != ConsoleKey.Escape && key != ConsoleKey.Q);
 
+            if (key == ConsoleKey.Escape)
+            {
+                Console.Clear();
+                selectedOption = 0;
+                MenuOptions("MainMenu");
+            }
+            else if (key == ConsoleKey.Q)
+            {
+                Environment.Exit(0);
+            }
+
             Console.CursorVisible = true;
         }
 
@@ -111,6 +122,7 @@ namespace StandCLI.handlers
                 {
                     Program.Settings["autoInject"] = "true";
                     Program.IniFile?.SetValue("Settings", "autoInject", "true");
+                    Task.Run(() => AutoInjection.AutoInject());
                     skipReadKey = true;
                 }
                 else if (sv_length[optionIndex] == "Auto inject: enabled")

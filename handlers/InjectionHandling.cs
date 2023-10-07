@@ -29,7 +29,7 @@ namespace StandCLI.handlers
         }
 
 
-        private static int GetGtaPid()
+        public static int GetGtaPid()
         {
             int gta_pid = -1;
             Process[] processes = Process.GetProcessesByName("GTA5");
@@ -121,6 +121,8 @@ namespace StandCLI.handlers
                     {
                         return "Failed to create a remote thread for " + stand_dll;
                     }
+
+                    Program.injected = true;
                     return "Injected version " + stand_vers;
                 }
                 finally

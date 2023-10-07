@@ -32,6 +32,8 @@ namespace StandCLI
 
         public static string CurrentStandCLIVersion = "2.0.0";
 
+        public static bool injected = false;
+
         static void Main(string[] args)
         {
             string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(CurrentDirectory, "StandCLI"));
@@ -50,6 +52,8 @@ namespace StandCLI
             CheckSettings();
             Disclaimer();
             SetMenuOptions();
+
+            Task.Run(() => AutoInjection.AutoInject());
 
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
@@ -162,8 +166,6 @@ namespace StandCLI
             Menus.Add("MainMenu", MainMenuOptions);
             SetWindowBufferAndSize(40, MainMenuOptions.Length + 4);
         }
-
-
 
         public static Dictionary<string, object> ReturnMenus()
         {
