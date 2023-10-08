@@ -40,6 +40,8 @@ namespace StandCLI
             string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(CurrentDirectory, "StandCLI"));
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
 
+            logfile = new(Path.Combine(StandCLIFolder, "logs.txt"));
+
             string[]? StandVersions = NetworkHandler.GetLatestStandVersion().Result;
             if (StandVersions == null)
             {
@@ -55,7 +57,6 @@ namespace StandCLI
             SetMenuOptions();
 
             Task.Run(() => AutoInjection.AutoInject());
-            logfile = new("StandCLI.log");
 
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
@@ -103,6 +104,7 @@ namespace StandCLI
         {
             if(Settings["disclaimer"] == "false")
             {
+                logfile?.Log("Disclaimer was skipped");
                 goto skip;
             }
 
@@ -127,12 +129,12 @@ namespace StandCLI
             if (choiceChar == 'c')
             {
                 IniFile?.SetValue("Settings", "disclaimer", "false");
+                logfile?.Log(RuntimeHandler.GetElapsedTime() + " - " + "Disclaimer set to not be shown");
             }
 
             skip:
                 Console.Clear();
                 Console.Title = "Stand CLI version " + CurrentStandCLIVersion;
-                logfile?.Log("Starting up");
             
         }
 

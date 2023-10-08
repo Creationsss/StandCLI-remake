@@ -122,7 +122,7 @@ namespace StandCLI.handlers
             {
                 using (StreamWriter writer = File.AppendText(logFilePath))
                 {
-                    writer.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss}: {message}");
+                    writer.WriteLine($"{RuntimeHandler.GetElapsedTime()} - {message}");
                 }
             }
             catch (Exception ex)
