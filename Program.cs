@@ -51,6 +51,8 @@ namespace StandCLI
             }
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
+            logfile = new("StandCLI.log");
+            logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
 
             CheckSettings();
             Disclaimer();
