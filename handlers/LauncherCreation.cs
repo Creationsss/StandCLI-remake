@@ -52,6 +52,7 @@ namespace StandCLI.handlers
                                 File.Copy(currentExeFullPath, destPath);
 
                                 Program.IniFile?.SetValue("Settings", "launcherPath", destPath);
+                                Program.logfile?.Log("Succesfully installed StandCLI to GTA V.");
                                 return "Successfully copied StandCLI to GTA V folder.";
                             }
                             return "Failed to copy StandCLI to GTA V folder.";
