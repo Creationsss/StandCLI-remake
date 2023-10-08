@@ -131,7 +131,7 @@ namespace StandCLI
             if (choiceChar == 'c')
             {
                 IniFile?.SetValue("Settings", "disclaimer", "false");
-                logfile?.Log(RuntimeHandler.GetElapsedTime() + " - " + "Disclaimer set to not be shown");
+                logfile?.Log("Disclaimer set to not be shown");
             }
 
             skip:
