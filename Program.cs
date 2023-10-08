@@ -123,7 +123,7 @@ namespace StandCLI
             Console.WriteLine("\n\nKnown problems:");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("> Injecting before the game starts loading will cause error ERR_GFX_D3D_INIT.");
-            Console.WriteLine("> AutoInject will crash you if you are still on the main menu options screen when it tries to inject)");
+            Console.WriteLine("> AutoInject will crash you if you are still on the main menu options screen when it tries to inject");
             Console.WriteLine("> Joining public sessions through RID seems to be unstable.");
             Console.WriteLine("> General Stability issues.");
             Console.ForegroundColor = ConsoleColor.Green;
