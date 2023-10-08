@@ -51,7 +51,7 @@ namespace StandCLI.handlers
                                 string destPath = Path.Combine(gtaPath, "PlayGTAV.exe");
                                 File.Copy(currentExeFullPath, destPath);
 
-                                Program.IniFile?.SetValue("Settings", "launcherPath", destPath);
+                                Program.IniFile?.SetValue("Settings", "launcherPath", Path.Combine(gtaPath, "PlayGTAV.exe"));
                                 return "Successfully copied StandCLI to GTA V folder.";
                             }
                             return "Failed to copy StandCLI to GTA V folder.";
@@ -90,7 +90,7 @@ namespace StandCLI.handlers
                     bool launcherExists = File.Exists(Path.Combine(gtaPath, "_PlayGTAV.exe"));
                     if(launcherPath == null || launcherPath != Path.Combine(gtaPath, "_PlayGTAV.exe") && launcherExists)
                     {
-                        Program.IniFile?.SetValue("Settings", "launcherPath", Path.Combine(gtaPath, "_PlayGTAV.exe"));
+                        Program.IniFile?.SetValue("Settings", "launcherPath", Path.Combine(gtaPath, "PlayGTAV.exe"));
                     }
                     
                     return launcherExists;
