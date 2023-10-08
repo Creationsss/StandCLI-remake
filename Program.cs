@@ -39,7 +39,6 @@ namespace StandCLI
         {
             string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(CurrentDirectory, "StandCLI"));
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
-
             string[]? StandVersions = NetworkHandler.GetLatestStandVersion().Result;
             if (StandVersions == null)
             {
@@ -49,13 +48,14 @@ namespace StandCLI
             }
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
+            logfile = new("StandCLI.log");
+            logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
 
             CheckSettings();
             Disclaimer();
             SetMenuOptions();
 
             Task.Run(() => AutoInjection.AutoInject());
-            logfile = new("StandCLI.log");
 
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
