@@ -4,7 +4,6 @@ namespace StandCLI
 {
     class Program
     {
-        private static readonly string CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
         public static IniFile? IniFile;
 
         public static Dictionary<string, string> Settings = new();
@@ -37,9 +36,11 @@ namespace StandCLI
 
         static void Main(string[] args)
         {
-            string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(CurrentDirectory, "StandCLI"));
-            IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
 
+            LauncherCreation.RunningAsLauncher();
+            string DocumentsFolder = FolderExists.CheckFolderExists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), false);
+            string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(DocumentsFolder, "StandCLI"));
+            IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
             logfile = new(Path.Combine(StandCLIFolder, "logs.txt"));
 
             string[]? StandVersions = NetworkHandler.GetLatestStandVersion().Result;
@@ -51,7 +52,6 @@ namespace StandCLI
             }
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
-            logfile = new("StandCLI.log");
             logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
 
             CheckSettings();
@@ -117,8 +117,6 @@ namespace StandCLI
             Console.WriteLine("Im not sure if injecting stand this way is safe so use at your own risk");
             Console.WriteLine("If you have any issues with this fork make a issue on github or dm me on discord @ Creations");
             Console.WriteLine("StandCLI is NOT affiliated with Calamity, Inc. nor Rockstar Games or TakeTwo Interactive.");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("\nUse the arrow keys to scroll and enter to select an option");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\n\nKnown problems:");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -126,8 +124,10 @@ namespace StandCLI
             Console.WriteLine("> AutoInject will crash you if you are still on the main menu options screen when it tries to inject");
             Console.WriteLine("> Joining public sessions through RID seems to be unstable.");
             Console.WriteLine("> General Stability issues.");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("\nUse the arrow keys to scroll and enter to select an option");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nPress c to never see this again or press any other key to continue");
+            Console.WriteLine("Press c to never see this again or press any other key to continue");
             ConsoleKeyInfo choiceInfo = Console.ReadKey(intercept: true);
             char choiceChar = char.ToLower(choiceInfo.KeyChar);
 
@@ -151,13 +151,14 @@ namespace StandCLI
             {
                 "Inject Stand",
                 "DLL Version Options",
+                "Launcher Options",
                 "Other Settings",
                 "\nExit"
             };
 
             ReloadFileOptions();
-
             ReloadStandDLLMenuOptions();
+            ReloadLauncherOptions();
 
             Menus.Add("MainMenu", MainMenuOptions);
         }
@@ -228,6 +229,27 @@ namespace StandCLI
             StandFileOptions = StandFileOptions.Append("\nBack").ToArray();
             Menus["StandFile"] = StandFileOptions;
         }
+        public static void 
+        ReloadLauncherOptions()
+        {
+            string? launcherPath = IniFile?.ReadValue("Settings", "launcherPath") ?? null;
 
+            string[] LauncherOptions = new string[] {};
+
+            if(!LauncherCreation.CheckIfLauncherExists())
+            {
+                LauncherOptions = LauncherOptions.Append("Create Launcher").ToArray();
+            }
+            else
+            {
+                LauncherOptions = LauncherOptions.Append($"Launcher Path: {launcherPath}\n").ToArray();
+                LauncherOptions = LauncherOptions.Append("Reinstall Launcher").ToArray();
+                LauncherOptions = LauncherOptions.Append("Delete Launcher").ToArray();
+                
+            }
+
+            LauncherOptions = LauncherOptions.Append("\nBack").ToArray();
+            Menus["LauncherOptions"] = LauncherOptions;
+        }
     }
 }

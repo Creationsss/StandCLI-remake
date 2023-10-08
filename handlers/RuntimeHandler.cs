@@ -4,7 +4,7 @@ namespace StandCLI.handlers
 {
     class RuntimeHandler
     {
-        private static Stopwatch stopwatch = new();
+        private static readonly Stopwatch stopwatch = new();
 
         public static void StartElapsedTime() 
         {

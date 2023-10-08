@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace StandCLI.handlers
@@ -62,6 +63,10 @@ namespace StandCLI.handlers
                     {
                         HandleStandDLLOptions(selectedOption);
                     }
+                    else if (Option == "LauncherOptions")
+                    {
+                        HandleLauncherOptions(selectedOption);
+                    }
                 }
 
             } while (key != ConsoleKey.Escape && key != ConsoleKey.Q);
@@ -90,6 +95,7 @@ namespace StandCLI.handlers
         public static void HandleMainMenuOptions(int optionIndex)
         {
             Console.Clear();
+            selectedOption = 0;
 
             switch (optionIndex)
             {
@@ -102,16 +108,18 @@ namespace StandCLI.handlers
                     MenuOptions("MainMenu");
                     break;
                 case 1:
-                    selectedOption = 0;
                     MenuOptions("StandDLL");
                     Console.ReadLine();
                     break;
                 case 2:
-                    selectedOption = 0;
-                    MenuOptions("StandFile");
+                    MenuOptions("LauncherOptions");
                     Console.ReadLine();
                     break;
                 case 3:
+                    MenuOptions("StandFile");
+                    Console.ReadLine();
+                    break;
+                case 4:
                     Environment.Exit(0);
                     break;
             }
@@ -252,6 +260,82 @@ namespace StandCLI.handlers
             {
                 Console.WriteLine("Invalid option index.");
                 Console.ReadKey();
+            }
+        }
+
+        public static void HandleLauncherOptions(int optionIndex)
+        {
+            Console.Clear();
+
+            string[] sv_length = (string[])Program.ReturnMenus()["LauncherOptions"];
+
+            if (optionIndex >= 0 && optionIndex < sv_length.Length)
+            {
+                string option = sv_length[optionIndex];
+                if(option.Contains("Back"))
+                {
+                    selectedOption = 0;
+                    MenuOptions("MainMenu");
+                    return;
+                }
+
+                if (option.Equals("Create Launcher"))
+                {
+                    string? gtaPath = Program.IniFile?.ReadValue("Settings", "gtaPath");
+
+                    Console.Clear();
+                    if(gtaPath == null || !Directory.Exists(gtaPath))
+                    {
+                        Console.WriteLine("Please enter the Grand Theft Auto V path:\n");
+                        gtaPath = Console.ReadLine();
+                    }
+
+                    if (string.IsNullOrWhiteSpace(gtaPath))
+                    {
+                        Console.WriteLine("You did not enter a valid path.");
+                    }
+                    else
+                    {
+                        Program.IniFile?.SetValue("Settings", "gtaPath", gtaPath);
+                        string CreateLauncherReturn = LauncherCreation.CreateLauncher();
+
+                        Console.Clear();
+                        Console.WriteLine(CreateLauncherReturn);
+                        Console.ReadKey();
+                    }
+                }
+                else if(option.StartsWith("Launcher Path:"))
+                {
+                    string launcherPath = Program.IniFile?.ReadValue("Settings", "launcherPath") ?? "null";
+                    if (launcherPath == "null")
+                    {
+                        Console.WriteLine("Launcher path not found.");
+                        Console.ReadKey();
+                    }
+                    Process.Start("explorer.exe", launcherPath);
+                }
+                else if(option.Equals("Reinstall Launcher"))
+                {
+                    string ReinstallLauncher = LauncherCreation.ReinstallLauncher();
+
+                    Console.Clear();
+                    Console.WriteLine(ReinstallLauncher);
+                    Console.ReadKey();
+                }
+                else if(option.Equals("Delete Launcher"))
+                {
+                    string DeleteLauncher = LauncherCreation.DeleteLauncher();
+                    Program.IniFile?.DeleteValue("Settings", "launcherPath");
+
+                    Console.Clear();
+                    Console.WriteLine(DeleteLauncher);
+                    Console.ReadKey();
+                }
+
+                Program.ReloadLauncherOptions();
+                Console.Clear();
+                selectedOption = 0;
+                MenuOptions("LauncherOptions");
             }
         }
     }

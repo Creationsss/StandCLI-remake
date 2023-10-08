@@ -105,6 +105,51 @@ namespace StandCLI.handlers
 
             return null;
         }
+
+        public bool DeleteValue(string section, string key)
+        {
+            List<string> lines = new List<string>();
+            if (File.Exists(filePath))
+            {
+                lines = new List<string>(File.ReadAllLines(filePath));
+            }
+
+            bool sectionFound = false;
+            bool keyFound = false;
+            for (int i = 0; i < lines.Count; i++)
+            {
+                string line = lines[i].Trim();
+                if (line.Equals("[" + section + "]"))
+                {
+                    sectionFound = true;
+                    continue;
+                }
+
+                if (line.StartsWith("[") && line.EndsWith("]"))
+                {
+                    sectionFound = false;
+                }
+
+                if (sectionFound)
+                {
+                    string[] parts = line.Split(new[] { '=' }, 2);
+                    if (parts.Length >= 2 && parts[0].Trim().Equals(key))
+                    {
+                        lines.RemoveAt(i);
+                        keyFound = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!sectionFound || !keyFound)
+            {
+                return false;
+            }
+
+            File.WriteAllLines(filePath, lines);
+            return true;
+        }
     }
 
     public class Logger
