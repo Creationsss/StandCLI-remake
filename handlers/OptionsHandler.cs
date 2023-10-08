@@ -333,6 +333,7 @@ namespace StandCLI.handlers
 
                         Console.Clear();
                         Console.WriteLine(CreateLauncherReturn);
+                        Program.logfile?.Log(CreateLauncherReturn);
                         Console.ReadKey();
                     }
                 }
@@ -353,6 +354,7 @@ namespace StandCLI.handlers
 
                     Console.Clear();
                     Console.WriteLine(ReinstallLauncher);
+                    Program.logfile?.Log(ReinstallLauncher);
                     Console.ReadKey();
                 }
                 else if(option.Equals("Delete Launcher"))
@@ -362,6 +364,7 @@ namespace StandCLI.handlers
 
                     Console.Clear();
                     Console.WriteLine(DeleteLauncher);
+                    Program.logfile?.Log(DeleteLauncher);
                     Console.ReadKey();
                 }
 
