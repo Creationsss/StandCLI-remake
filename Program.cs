@@ -196,11 +196,13 @@ namespace StandCLI
 
         public static void ReloadFileOptions()
         {
-            StandFileOptions = new string[] { };
+            StandFileOptions = new string[] {};
+
             string autoInject = Settings["autoInject"] .Equals("true") ? "Auto inject: enabled" : "Auto inject: disabled";
-            
             StandFileOptions = StandFileOptions.Append(autoInject).ToArray();
 
+            string? ShowDisclaimer = (IniFile?.ReadValue("Settings", "disclaimer")?.Equals("true") ?? false) ? "Show disclaimer: enabled" : "Show disclaimer: disabled";
+            StandFileOptions = StandFileOptions.Append(ShowDisclaimer).ToArray();
 
             if (FolderExists.CheckFolderExists(StandFolder, false) != "null")
             {
