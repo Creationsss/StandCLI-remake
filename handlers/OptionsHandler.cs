@@ -5,9 +5,11 @@ namespace StandCLI.handlers
     public partial class MenuOptionsHandler
     {
         private static int selectedOption = 0;
+        public static string CurrentMenu = "";
 
         public static void MenuOptions(string Option)
         {
+            CurrentMenu = Option;
             Console.CursorVisible = false;
             ConsoleKey key;
 
@@ -68,7 +70,14 @@ namespace StandCLI.handlers
             {
                 Console.Clear();
                 selectedOption = 0;
-                MenuOptions("MainMenu");
+                if(CurrentMenu == "MainMenu")
+                {
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    MenuOptions("MainMenu");
+                }
             }
             else if (key == ConsoleKey.Q)
             {
@@ -137,7 +146,17 @@ namespace StandCLI.handlers
                     MenuOptions("MainMenu");
                     return;
                 }
-                if(sv_split[2].Contains("Folder"))
+                else if (sv_length[optionIndex] == "Show disclaimer: enabled")
+                {
+                    Program.IniFile?.SetValue("Settings", "disclaimer", "false");
+                    skipReadKey = true;
+                }
+                else if (sv_length[optionIndex] == "Show disclaimer: disabled")
+                {
+                    Program.IniFile?.SetValue("Settings", "disclaimer", "true");
+                    skipReadKey = true;
+                }
+                else if(sv_split[2].Contains("Folder"))
                 {
                     if (FolderExists.CheckFolderExists(Program.StandFolder, false) != "null")
                     {
@@ -169,7 +188,11 @@ namespace StandCLI.handlers
                 Program.ReloadStandDLLMenuOptions();
 
                 Console.Clear();
-                selectedOption = 0;
+                int length = ReturnLength("StandFile");
+                if (length <= selectedOption)
+                {
+                    selectedOption = 0;
+                }
                 MenuOptions("StandFile");
             }
             else
@@ -177,6 +200,17 @@ namespace StandCLI.handlers
                 Console.WriteLine("Invalid option index.");
                 Console.ReadKey();
             }
+        }
+
+        public static int ReturnLength(string Option)
+        {
+            Dictionary<string, object> menus = Program.ReturnMenus();
+            if (menus.ContainsKey(Option) && menus[Option] is string[] standFileOptions)
+            {
+                int length = standFileOptions.Length;
+                return length;
+            }
+            return 0;
         }
 
         public static void HandleStandDLLOptions(int optionIndex)
