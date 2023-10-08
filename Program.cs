@@ -37,6 +37,7 @@ namespace StandCLI
 
         static void Main(string[] args)
         {
+            RuntimeHandler.StartElapsedTime();
             string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(CurrentDirectory, "StandCLI"));
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
 
@@ -53,7 +54,6 @@ namespace StandCLI
             CurrentStandDllVersion = StandVersions[1];
             logfile = new("StandCLI.log");
             logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
-            RuntimeHandler.StartElapsedTime();
             CheckSettings();
             Disclaimer();
             SetMenuOptions();
