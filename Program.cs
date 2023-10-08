@@ -12,8 +12,7 @@ namespace StandCLI
         {
             {"disclaimer", "true"},
             {"autoInject", "false"},
-            {"autoInjectDelay", "45000"},
-            {"SetWindowSize", "false"}
+            {"autoInjectDelay", "45000"}
         };
 
         private static string[] MainMenuOptions = {};
@@ -30,9 +29,11 @@ namespace StandCLI
         public static string CurrentFullStandVersion = "";
         public static string CurrentStandDllVersion = "";
 
-        public static string CurrentStandCLIVersion = "2.0.0";
+        public static string CurrentStandCLIVersion = "2.0";
 
         public static bool injected = false;
+
+        private static Logger? logfile;
 
         static void Main(string[] args)
         {
@@ -54,6 +55,7 @@ namespace StandCLI
             SetMenuOptions();
 
             Task.Run(() => AutoInjection.AutoInject());
+            logfile = new("StandCLI.log");
 
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
@@ -104,7 +106,6 @@ namespace StandCLI
                 goto skip;
             }
 
-            SetWindowBufferAndSize(100, 30);
             Console.Clear();
             Console.Title = "Stand CLI Disclaimer";
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -131,20 +132,8 @@ namespace StandCLI
             skip:
                 Console.Clear();
                 Console.Title = "Stand CLI version " + CurrentStandCLIVersion;
+                logfile?.Log("Starting up");
             
-        }
-
-        public static void SetWindowBufferAndSize(int width, int height)
-        {
-            if(Settings["SetWindowSize"] == "false") return;
-            if (width == 0) width = Console.WindowWidth;
-            if (height == 0) height = Console.WindowHeight;
-
-            try {
-                Console.SetWindowSize(width, height);
-                Console.SetBufferSize(width, height);
-            }
-            catch{}
         }
 
         static void SetMenuOptions()
@@ -164,7 +153,6 @@ namespace StandCLI
             ReloadStandDLLMenuOptions();
 
             Menus.Add("MainMenu", MainMenuOptions);
-            SetWindowBufferAndSize(40, MainMenuOptions.Length + 4);
         }
 
         public static Dictionary<string, object> ReturnMenus()

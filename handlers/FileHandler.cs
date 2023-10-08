@@ -114,7 +114,6 @@ namespace StandCLI.handlers
         public Logger(string logFileName)
         {
             this.logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, logFileName);
-            Console.WriteLine($"Logging to {logFilePath}");
         }
 
         public void Log(string message)
