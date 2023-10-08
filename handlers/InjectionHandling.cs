@@ -49,9 +49,10 @@ namespace StandCLI.handlers
             string stand_dll;
             string? usingVers = Program.UsingStandVersion();
             string stand_vers = "";
-
+            
             if (gta_pid == -1)
             {
+                Program.logfile?.Log("Could not find GTA5.EXE");
                 return "Couldn't find GTA5 process";
             }
 

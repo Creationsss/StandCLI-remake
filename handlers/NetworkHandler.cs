@@ -25,6 +25,7 @@ namespace StandCLI.handlers
                 }
                 catch (Exception ex)
                 {
+                    Program.logfile?.Log("Error while getting Supported stand versions." + ex);
                     return ex.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries);
                 }
             }
@@ -55,6 +56,7 @@ namespace StandCLI.handlers
                 }
                 else
                 {
+                    Program.logfile?.Log($"HTTP Error: {response.StatusCode}");
                     Console.WriteLine($"HTTP Error: {response.StatusCode}");
                 }
             }
@@ -160,6 +162,7 @@ namespace StandCLI.handlers
                 if (!skipPrint)
                 {
                     Console.WriteLine($"\nDownloaded version {standDllVersion} to {destinationPath}\n");
+                    Program.logfile?.Log($"Succesfully installed Stand {standDllVersion}!");
                 }
                 return true;
             }
@@ -168,6 +171,9 @@ namespace StandCLI.handlers
                 Console.WriteLine($"\nError downloading Stand DLL: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 Console.WriteLine($"Error downloading Stand DLL: {ex.ToString()}");
+                Program.logfile?.Log($"\nError downloading Stand DLL: {ex.Message}");
+                Program.logfile?.Log($"Stack Trace: {ex.StackTrace}");
+                Program.logfile?.Log($"Error downloading Stand DLL: {ex.ToString()}");
                 return false;
             }
         }

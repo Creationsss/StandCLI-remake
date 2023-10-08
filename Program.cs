@@ -36,8 +36,9 @@ namespace StandCLI
 
         static void Main(string[] args)
         {
-
+            RuntimeHandler.StartElapsedTime();
             LauncherCreation.RunningAsLauncher();
+            
             string DocumentsFolder = FolderExists.CheckFolderExists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), false);
             string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(DocumentsFolder, "StandCLI"));
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
@@ -53,7 +54,6 @@ namespace StandCLI
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
             logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
-
             CheckSettings();
             Disclaimer();
             SetMenuOptions();
