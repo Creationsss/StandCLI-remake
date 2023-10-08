@@ -33,7 +33,7 @@ namespace StandCLI
 
         public static bool injected = false;
 
-        private static Logger? logfile;
+        public static Logger? logfile;
 
         static void Main(string[] args)
         {
@@ -116,13 +116,16 @@ namespace StandCLI
             Console.WriteLine("Disclaimer: ");
             Console.WriteLine("Im not sure if injecting stand this way is safe so use at your own risk");
             Console.WriteLine("If you have any issues with this fork make a issue on github or dm me on discord @ Creations");
+            Console.WriteLine("StandCLI is NOT affiliated with Calamity, Inc. nor Rockstar Games or TakeTwo Interactive.");
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("\nUse the arrow keys to scroll and enter to select an option");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\n\nKnown problems:");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("> Injecting before the game starts loading will cause error ERR_GFX_D3D_INIT.");
             Console.WriteLine("> AutoInject will crash you if you are still on the main menu options screen when it tries to inject");
             Console.WriteLine("> Joining public sessions through RID seems to be unstable.");
+            Console.WriteLine("> General Stability issues.");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\nPress c to never see this again or press any other key to continue");
             ConsoleKeyInfo choiceInfo = Console.ReadKey(intercept: true);
