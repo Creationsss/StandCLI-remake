@@ -31,6 +31,10 @@ namespace StandCLI.handlers
                             return;
                         }
                         string? standVersion = Program.IniFile?.ReadValue("Settings", "standVersion");
+                        if(standVersion == null || standVersion == "")
+                        {
+                            Program.IniFile?.SetValue("Settings", "standVersion", Program.CurrentStandCLIVersion);
+                        }
                         int remainingSeconds = remainingMilliseconds / 1000;
                         Console.Title = $"(AutoInject) Injecting version {standVersion} in {remainingSeconds}s";
                         await Task.Delay(1000);
