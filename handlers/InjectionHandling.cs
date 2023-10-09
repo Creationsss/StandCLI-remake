@@ -124,7 +124,7 @@ namespace StandCLI.handlers
                     }
 
                     Program.injected = true;
-                    return "Injected version " + stand_vers;
+                    return $"Injected version {stand_vers}";
                 }
                 finally
                 {
