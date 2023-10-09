@@ -41,7 +41,9 @@ namespace StandCLI.handlers
                 var pattern = $@"({key}=\S+)";
                 var replacement = $"{key}=[REDACTED]";
                 argsString = Regex.Replace(argsString, pattern, replacement);
+                
             }
+            Program.logfile?.Log("Sensitive info has been hidden.");
             return argsString;
         }
 
@@ -71,20 +73,22 @@ namespace StandCLI.handlers
                                 {
                                     string destPath = Path.Combine(gtaPath, "PlayGTAV.exe");
                                     File.Copy(currentExeFullPath, destPath);
-
+                                    Program.logfile?.Log("Launcher was created succesfully!");
                                     Program.IniFile?.SetValue("Settings", "launcherPath", destPath);
                                     return "Successfully copied StandCLI to GTA V folder.";
                                 }
+                                Program.logfile?.Log("Path to executable is Invalid! Could not create launcher.");
                                 return "Failed to copy StandCLI to GTA V folder.";
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
+                                Program.logfile?.Log("An exception occurred (Please report this on github!) Exception:" + ex.ToString() + "Message:" + ex.Message);
                                 return "Failed to copy StandCLI to GTA V folder.";
                             }
                         }
                         catch (Exception ex)
                         {
-                            Program.logfile?.Log("Failed to copy StandCLI to GTA V (please open an issue on github.) Exception:" + ex.ToString());
+                            Program.logfile?.Log("Failed to copy StandCLI to GTA V (please open an issue on github!) Exception:" + ex.ToString());
                             return "Failed to copy StandCLI to GTA V folder.";
                         }
                     }
@@ -144,37 +148,46 @@ namespace StandCLI.handlers
 
                 if(gtaPath != null)
                 {
+                    Program.logfile?.Log("GTAPATH is set. continuing...");
                     string defaultGTAEXE = Path.Combine(gtaPath, "PlayGTAV.exe");
 
                     if (launcherPath != null)
                     {
+                        Program.logfile?.Log("launcher path is set!");
                         if (Directory.Exists(gtaPath))
                         {
+                            Program.logfile?.Log("Checking for gta path...");
                             if (File.Exists(defaultGTAEXE) && currentExeFullPath != null)
                             {
+                                Program.logfile?.Log("Exists! Reinstalling now...");
                                 try
                                 {
                                     File.Delete(defaultGTAEXE);
                                     File.Copy(currentExeFullPath, Path.Combine(gtaPath, "PlayGTAV.exe"));
+                                    Program.logfile?.Log("Done!");
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
+                                    Program.logfile?.Log("There was an error! (Please report this on github!) Exception: " + ex.ToString());
                                     return "Failed to reinstall StandCLI to GTA V folder.";
                                 }
                             }
                         }
                         else
                         {
+                            Program.logfile?.Log("GTA path doesnt exist! (or isnt valid)");
                             return "GTA V path not specified.";
                         }
                     }
                     else
                     {
+                        Program.logfile?.Log("Launcher could not be found! (does the path not exist?)");
                         return "Launcher not found.";
                     }
                 }
                 else
                 {
+                    Program.logfile?.Log("GTA path is not set. please set it before doing this!");
                     return "GTA V path not specified.";
                 }
                 return "Successfully reinstalled StandCLI to GTA V folder.";
@@ -195,42 +208,52 @@ namespace StandCLI.handlers
 
                 if(gtaPath != null)
                 {
+                    Program.logfile?.Log("GTAPATH is set. continuing...");
                     string defaultGTAEXE = Path.Combine(gtaPath, "PlayGTAV.exe");
 
                     if (launcherPath != null)
                     {
+                        Program.logfile?.Log("launcher path is set!");
                         if (Directory.Exists(gtaPath))
                         {
+                            Program.logfile?.Log("Checking for gta path...");
                             if (File.Exists(defaultGTAEXE))
                             {
+                                Program.logfile?.Log("Exists! Deleting now...");
                                 try 
                                 {
                                     File.Delete(defaultGTAEXE);
                                     File.Copy(Path.Combine(gtaPath, "_PlayGTAV.exe"), Path.Combine(gtaPath, "PlayGTAV.exe"));
                                     File.Delete(Path.Combine(gtaPath, "_PlayGTAV.exe"));
+                                    Program.logfile?.Log("Launcher deleted, PlayGTAV.exe is now street legal!");
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
+                                    Program.logfile?.Log("Couldnt delete launcher! (do we not have permission? (Please report this!) ) Exception: " + ex.ToString());
                                     return "Failed to delete StandCLI from GTA V folder.";
                                 }
                             }
                             else
                             {
+                                Program.logfile?.Log("Could not find the original launcher!");
                                 return "Launcher not found.";
                             }
                         }
                         else
                         {
+                            Program.logfile?.Log("GTA path doesnt exist! (or isnt valid)");
                             return "GTA V path not specified.";
                         }
                     }
                     else
                     {
+                        Program.logfile?.Log("Launcher could not be found! (does the path not exist?)");
                         return "Launcher not found.";
                     }
                 }
                 else
                 {
+                    Program.logfile?.Log("GTA path is not set. please set it before doing this!");
                     return "GTA V path not specified.";
                 }
 

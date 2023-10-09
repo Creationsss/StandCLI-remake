@@ -67,6 +67,7 @@ namespace StandCLI.handlers
                     IntPtr loadLibraryAddress = DLLImports.GetProcAddressWrapper(DLLImports.GetModuleHandleWrapper("kernel32.dll"), "LoadLibraryW");
                     if (loadLibraryAddress == IntPtr.Zero)
                     {
+                        Program.logfile?.Log("Could not find LoadLibraryW address.");
                         return "Couldn't find LoadLibraryW address";
                     }
 
@@ -77,6 +78,7 @@ namespace StandCLI.handlers
 
                     if(download_folder == "null")
                     {
+                        Program.logfile?.Log("Download folder could not be created or does not exist.");
                         return "Couldn't create download folder";
                     }
                     else
@@ -127,6 +129,7 @@ namespace StandCLI.handlers
                     }
 
                     Program.injected = true;
+                    Program.logfile?.Log("Injected Stand version " + stand_vers + "!");
                     return "Injected version " + stand_vers;
                 }
                 finally
@@ -136,6 +139,7 @@ namespace StandCLI.handlers
             }
             else
             {
+                Program.logfile?.Log("Couldnt get handle of GTA5.exe!");
                 return "Failed to get a handle to the game's process.";
             }
         }

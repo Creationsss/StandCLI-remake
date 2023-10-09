@@ -20,6 +20,7 @@ namespace StandCLI.handlers
                     
                     if (InjectDelay == 0)
                     {
+                        Program.logfile?.Log("Inject delay is invalid! Resetting.");
                         InjectDelay = 45000;
                         Program.IniFile?.SetValue("Settings", "autoInjectDelay", "45000");
                     }
