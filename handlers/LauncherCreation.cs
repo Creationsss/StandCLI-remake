@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace StandCLI.handlers
 {
@@ -17,9 +18,11 @@ namespace StandCLI.handlers
                     Program.logfile?.Log("Found launcher!");
                     string[] args = Environment.GetCommandLineArgs();
                     args = args.Skip(1).ToArray();
-
                     string argsString = string.Join(" ", args);
-                    Program.logfile?.Log($"Running as launcher with args: {argsString}");
+                    
+                    string maskedArgsString = MaskSensitiveInfo(argsString, new[] {"AUTH_PASSWORD", "epicusername", "epicuserid"});
+                    
+                    Program.logfile?.Log($"Running as launcher with args: {maskedArgsString}");
 
                     ProcessStartInfo startInfo = new()
                     {
@@ -29,6 +32,17 @@ namespace StandCLI.handlers
                     Process.Start(startInfo);
                 }
             }
+        }
+
+        private static string MaskSensitiveInfo(string argsString, string[] sensitiveKeys)
+        {
+            foreach (var key in sensitiveKeys)
+            {
+                var pattern = $@"({key}=\S+)";
+                var replacement = $"{key}=[REDACTED]";
+                argsString = Regex.Replace(argsString, pattern, replacement);
+            }
+            return argsString;
         }
 
         public static string CreateLauncher()
@@ -45,21 +59,28 @@ namespace StandCLI.handlers
                     string defaultGTAEXE = Path.Combine(gtaPath, "PlayGTAV.exe");
                     if (File.Exists(defaultGTAEXE))
                     {
-                        Program.logfile?.Log("Found: " + defaultGTAEXE);
-                        File.Copy(defaultGTAEXE, Path.Combine(gtaPath, "_PlayGTAV.exe"));
-                        File.Delete(defaultGTAEXE);
-                        
                         try
                         {
-                            if (currentExeFullPath != null)
+                            Program.logfile?.Log("Found: " + defaultGTAEXE);
+                            File.Copy(defaultGTAEXE, Path.Combine(gtaPath, "_PlayGTAV.exe"));
+                            File.Delete(defaultGTAEXE);
+                            
+                            try
                             {
-                                string destPath = Path.Combine(gtaPath, "PlayGTAV.exe");
-                                File.Copy(currentExeFullPath, destPath);
+                                if (currentExeFullPath != null)
+                                {
+                                    string destPath = Path.Combine(gtaPath, "PlayGTAV.exe");
+                                    File.Copy(currentExeFullPath, destPath);
 
-                                Program.IniFile?.SetValue("Settings", "launcherPath", destPath);
-                                return "Successfully copied StandCLI to GTA V folder.";
+                                    Program.IniFile?.SetValue("Settings", "launcherPath", destPath);
+                                    return "Successfully copied StandCLI to GTA V folder.";
+                                }
+                                return "Failed to copy StandCLI to GTA V folder.";
                             }
-                            return "Failed to copy StandCLI to GTA V folder.";
+                            catch (Exception)
+                            {
+                                return "Failed to copy StandCLI to GTA V folder.";
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -131,8 +152,15 @@ namespace StandCLI.handlers
                         {
                             if (File.Exists(defaultGTAEXE) && currentExeFullPath != null)
                             {
-                                File.Delete(defaultGTAEXE);
-                                File.Copy(currentExeFullPath, Path.Combine(gtaPath, "PlayGTAV.exe"));
+                                try
+                                {
+                                    File.Delete(defaultGTAEXE);
+                                    File.Copy(currentExeFullPath, Path.Combine(gtaPath, "PlayGTAV.exe"));
+                                }
+                                catch (Exception)
+                                {
+                                    return "Failed to reinstall StandCLI to GTA V folder.";
+                                }
                             }
                         }
                         else
@@ -175,9 +203,16 @@ namespace StandCLI.handlers
                         {
                             if (File.Exists(defaultGTAEXE))
                             {
-                                File.Delete(defaultGTAEXE);
-                                File.Copy(Path.Combine(gtaPath, "_PlayGTAV.exe"), Path.Combine(gtaPath, "PlayGTAV.exe"));
-                                File.Delete(Path.Combine(gtaPath, "_PlayGTAV.exe"));
+                                try 
+                                {
+                                    File.Delete(defaultGTAEXE);
+                                    File.Copy(Path.Combine(gtaPath, "_PlayGTAV.exe"), Path.Combine(gtaPath, "PlayGTAV.exe"));
+                                    File.Delete(Path.Combine(gtaPath, "_PlayGTAV.exe"));
+                                }
+                                catch (Exception)
+                                {
+                                    return "Failed to delete StandCLI from GTA V folder.";
+                                }
                             }
                             else
                             {

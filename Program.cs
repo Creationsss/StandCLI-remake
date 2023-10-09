@@ -87,9 +87,9 @@ namespace StandCLI
             }
             else{
                 string? stand_dll_ver = IniFile?.ReadValue("Settings", "standVersion");
-                if(stand_dll_ver == null)
+                if(stand_dll_ver == null || stand_dll_ver == "")
                 {
-                    return null;
+                    return CurrentStandDllVersion;
                 }
                 else
                 {
@@ -268,6 +268,7 @@ namespace StandCLI
         public static void ReloadLauncherOptions()
         {
             string? launcherPath = IniFile?.ReadValue("Settings", "launcherPath") ?? null;
+            string? gtaPath = IniFile?.ReadValue("Settings", "gtaPath") ?? null;
 
             string[] LauncherOptions = new string[] {};
 
@@ -277,7 +278,7 @@ namespace StandCLI
             }
             else
             {
-                LauncherOptions = LauncherOptions.Append($"Launcher Path: {launcherPath}\n").ToArray();
+                if(gtaPath != null || gtaPath != "" && LauncherCreation.CheckIfLauncherExists()) LauncherOptions = LauncherOptions.Append($"Launcher Path: {launcherPath}\n").ToArray();
                 LauncherOptions = LauncherOptions.Append("Reinstall Launcher").ToArray();
                 LauncherOptions = LauncherOptions.Append("Delete Launcher").ToArray();
                 

@@ -47,6 +47,13 @@ namespace StandCLI.handlers
                     {
                         string standFullVersion = versionInfo[0].Trim();
                         string standDllVersion = versionInfo[1].Trim();
+
+                        string? IniVersion = Program.IniFile?.ReadValue("Settings", "standVersion");
+
+                        if(IniVersion == "" || IniVersion == null)
+                        {
+                            Program.IniFile?.SetValue("Settings", "standVersion", standDllVersion);
+                        }
                         return new string[] { standFullVersion, standDllVersion };
                     }
                     else
