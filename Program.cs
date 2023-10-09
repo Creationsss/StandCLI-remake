@@ -62,7 +62,7 @@ namespace StandCLI
             }
             else
             {
-                fckups =+ 1;
+                fckups += 1;
             }
             if(StandFolder != null)
             {
@@ -70,7 +70,7 @@ namespace StandCLI
             }
             else
             {
-                fckups =+ 1;
+                fckups += 1;
             }
             if(StandBinFolder != null)
             {
@@ -78,7 +78,7 @@ namespace StandCLI
             }
             else
             {
-                fckups =+ 1;
+                fckups += 1;
             }
             if(cutver != "10.0")
             {
