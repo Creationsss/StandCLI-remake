@@ -35,6 +35,7 @@ namespace StandCLI
         public static bool injected = false;
 
         public static Logger? logfile;
+        public static Dictionary<string, string> ErrorHandles = new();
 
         static void Main(string[] args)
         {
@@ -67,6 +68,7 @@ namespace StandCLI
             SetMenuOptions();
 
             Task.Run(() => AutoInjection.AutoInject());
+            Task.Run(() => ExeptionHandler.InitializeErrorHandles());
 
             MenuOptionsHandler.MenuOptions("MainMenu");
         }

@@ -11,9 +11,24 @@ namespace StandCLI.handlers
 
     public class ExeptionHandler
     {
-        readonly Dictionary<string, string> ErrorHandles = new();
-        
+        public static async Task InitializeErrorHandles()
+        {
+            if (Program.ErrorHandles.Count == 0)
+            {
+                Program.ErrorHandles = await NetworkHandler.ExceptionsList();
+            }
+        }
 
+        public static bool DoesExceptionExist(string exceptionKey)
+        {
+            return Program.ErrorHandles.ContainsKey(exceptionKey);
+        }
+
+
+        public ExeptionHandler()
+        {
+            
+        }
 
     }
 }
