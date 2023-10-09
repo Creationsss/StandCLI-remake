@@ -154,12 +154,44 @@ namespace StandCLI.handlers
                     MenuOptions("MainMenu");
                     return;
                 }
-                else if (sv_length[optionIndex] == "Show disclaimer: enabled")
+                else if(sv_length[optionIndex].StartsWith("GTA Path:"))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Please enter the Grand Theft Auto V path:\n");
+                    string? gtaPath = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(gtaPath))
+                    {
+                        Console.WriteLine("You did not enter a valid path.");
+                    }
+                    else
+                    {
+                        if(Directory.Exists(gtaPath))
+                        {
+                            Program.IniFile?.SetValue("Settings", "gtaPath", gtaPath);
+                            skipReadKey = true;
+                        }
+                        else 
+                        {
+                            Console.WriteLine("\nThe path you entered does not exist.");
+                        }
+                    }
+                }
+                else if (sv_length[optionIndex].StartsWith("StandCLI Logs and Settings:"))
+                {
+                    Process.Start("explorer.exe", Program.StandCLIFolder);
+                    skipReadKey = true;
+                }
+                else if(sv_length[optionIndex].StartsWith("Stand Folder:"))
+                {
+                    Process.Start("explorer.exe", Program.StandFolder);
+                    skipReadKey = true;
+                }
+                else if (sv_length[optionIndex] == "Show disclaimer: enabled\n")
                 {
                     Program.IniFile?.SetValue("Settings", "disclaimer", "false");
                     skipReadKey = true;
                 }
-                else if (sv_length[optionIndex] == "Show disclaimer: disabled")
+                else if (sv_length[optionIndex] == "Show disclaimer: disabled\n")
                 {
                     Program.IniFile?.SetValue("Settings", "disclaimer", "true");
                     skipReadKey = true;
@@ -194,6 +226,7 @@ namespace StandCLI.handlers
                 if (!skipReadKey) Console.ReadKey();
                 Program.ReloadFileOptions();
                 Program.ReloadStandDLLMenuOptions();
+                Program.ReloadLauncherOptions();
 
                 Console.Clear();
                 int length = ReturnLength("StandFile");
@@ -301,12 +334,14 @@ namespace StandCLI.handlers
 
                         Console.Clear();
                         Console.WriteLine(CreateLauncherReturn);
+                        Program.logfile?.Log(CreateLauncherReturn);
                         Console.ReadKey();
                     }
                 }
                 else if(option.StartsWith("Launcher Path:"))
                 {
                     string launcherPath = Program.IniFile?.ReadValue("Settings", "launcherPath") ?? "null";
+                    launcherPath = launcherPath.Replace("\\PlayGTAV.exe", "");
                     if (launcherPath == "null")
                     {
                         Console.WriteLine("Launcher path not found.");
@@ -320,6 +355,7 @@ namespace StandCLI.handlers
 
                     Console.Clear();
                     Console.WriteLine(ReinstallLauncher);
+                    Program.logfile?.Log(ReinstallLauncher);
                     Console.ReadKey();
                 }
                 else if(option.Equals("Delete Launcher"))
@@ -329,6 +365,7 @@ namespace StandCLI.handlers
 
                     Console.Clear();
                     Console.WriteLine(DeleteLauncher);
+                    Program.logfile?.Log(DeleteLauncher);
                     Console.ReadKey();
                 }
 

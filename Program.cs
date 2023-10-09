@@ -22,6 +22,8 @@ namespace StandCLI
 
         public static string StandFolder = FolderExists.CheckFolderExists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Stand"), false);
         public static string StandBinFolder = FolderExists.CheckFolderExists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Stand", "Bin"), false);
+        public static string DocumentsFolder = FolderExists.CheckFolderExists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), false);
+        public static string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(DocumentsFolder, "StandCLI"));
 
         public static string[] SupportedStandVersions = NetworkHandler.SupportedStandVersion().Result;
 
@@ -37,10 +39,7 @@ namespace StandCLI
         static void Main(string[] args)
         {
             RuntimeHandler.StartElapsedTime();
-            LauncherCreation.RunningAsLauncher();
-            
-            string DocumentsFolder = FolderExists.CheckFolderExists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), false);
-            string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(DocumentsFolder, "StandCLI"));
+
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
             logfile = new(Path.Combine(StandCLIFolder, "logs.txt"));
 
@@ -54,6 +53,9 @@ namespace StandCLI
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
             logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
+
+            LauncherCreation.RunningAsLauncher();
+
             CheckSettings();
             Disclaimer();
             SetMenuOptions();
@@ -205,8 +207,29 @@ namespace StandCLI
             string autoInject = Settings["autoInject"] .Equals("true") ? "Auto inject: enabled" : "Auto inject: disabled";
             StandFileOptions = StandFileOptions.Append(autoInject).ToArray();
 
-            string? ShowDisclaimer = (IniFile?.ReadValue("Settings", "disclaimer")?.Equals("true") ?? false) ? "Show disclaimer: enabled" : "Show disclaimer: disabled";
+            string? ShowDisclaimer = (IniFile?.ReadValue("Settings", "disclaimer")?.Equals("true") ?? false) ? "Show disclaimer: enabled\n" : "Show disclaimer: disabled\n";
             StandFileOptions = StandFileOptions.Append(ShowDisclaimer).ToArray();
+
+            string? gtaPath = IniFile?.ReadValue("Settings", "gtaPath") ?? null;
+
+            if (gtaPath != null)
+            {
+                StandFileOptions = StandFileOptions.Append($"GTA Path: {gtaPath}").ToArray();
+            }
+            else
+            {
+                StandFileOptions = StandFileOptions.Append("GTA Path: not set").ToArray();
+            }
+
+            if(Directory.Exists(StandCLIFolder))
+            {
+                StandFileOptions = StandFileOptions.Append($"StandCLI Logs and Settings: {StandCLIFolder}").ToArray();
+            }
+
+            if(Directory.Exists(StandFolder))
+            {
+                StandFileOptions = StandFileOptions.Append($"Stand Folder: {StandFolder}").ToArray();
+            }
 
             if (FolderExists.CheckFolderExists(StandFolder, false) != "null")
             {
@@ -228,9 +251,9 @@ namespace StandCLI
 
             StandFileOptions = StandFileOptions.Append("\nBack").ToArray();
             Menus["StandFile"] = StandFileOptions;
-        }
-        public static void 
-        ReloadLauncherOptions()
+        } 
+
+        public static void ReloadLauncherOptions()
         {
             string? launcherPath = IniFile?.ReadValue("Settings", "launcherPath") ?? null;
 

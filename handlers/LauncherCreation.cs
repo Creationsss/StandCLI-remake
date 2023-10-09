@@ -9,6 +9,7 @@ namespace StandCLI.handlers
             string currentName = Process.GetCurrentProcess().ProcessName;
             if (currentName == "PlayGTAV")
             {
+                DLLImports.AllocConsole();
                 if (File.Exists("_PlayGTAV.exe"))
                 {
                     string[] args = Environment.GetCommandLineArgs();
@@ -16,14 +17,13 @@ namespace StandCLI.handlers
                     args = args.Skip(1).ToArray();
 
                     string argsString = string.Join(" ", args);
+                    Program.logfile?.Log($"Running as launcher with args: {argsString}");
 
-                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    ProcessStartInfo startInfo = new()
                     {
                         FileName = "_PlayGTAV.exe",
                         Arguments = argsString,
-                        UseShellExecute = false
                     };
-
                     Process.Start(startInfo);
                 }
             }
@@ -55,7 +55,6 @@ namespace StandCLI.handlers
                                 File.Copy(currentExeFullPath, destPath);
 
                                 Program.IniFile?.SetValue("Settings", "launcherPath", destPath);
-                                Program.logfile?.Log("Succesfully installed StandCLI to GTA V.");
                                 return "Successfully copied StandCLI to GTA V folder.";
                             }
                             return "Failed to copy StandCLI to GTA V folder.";
@@ -95,7 +94,7 @@ namespace StandCLI.handlers
                     bool launcherExists = File.Exists(Path.Combine(gtaPath, "_PlayGTAV.exe"));
                     if(launcherPath == null || launcherPath != Path.Combine(gtaPath, "_PlayGTAV.exe") && launcherExists)
                     {
-                        Program.IniFile?.SetValue("Settings", "launcherPath", Path.Combine(gtaPath, "_PlayGTAV.exe"));
+                        Program.IniFile?.SetValue("Settings", "launcherPath", Path.Combine(gtaPath, "PlayGTAV.exe"));
                     }
                     
                     return launcherExists;
