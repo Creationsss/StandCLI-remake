@@ -325,10 +325,12 @@ namespace StandCLI.handlers
 
                     if (string.IsNullOrWhiteSpace(gtaPath))
                     {
+                        Program.logfile?.Log("Entered path was invalid!");
                         Console.WriteLine("You did not enter a valid path.");
                     }
                     else
                     {
+                        Program.logfile?.Log("Path: " + gtaPath + " Was correct! Continuing...");
                         Program.IniFile?.SetValue("Settings", "gtaPath", gtaPath);
                         string CreateLauncherReturn = LauncherCreation.CreateLauncher();
 
@@ -345,6 +347,7 @@ namespace StandCLI.handlers
                     if (launcherPath == "null")
                     {
                         Console.WriteLine("Launcher path not found.");
+                        Program.logfile?.Log("Launcher path has not been set!");
                         Console.ReadKey();
                     }
                     Process.Start("explorer.exe", launcherPath);
