@@ -78,7 +78,7 @@ namespace StandCLI.handlers
                     }
                     else
                     {
-                        if (usingVers != null && !File.Exists(Path.Combine(download_folder, usingVers)))
+                        if (!File.Exists(Path.Combine(download_folder, $"Stand_{usingVers}.dll")))
                         {
                             Task<bool> downloadTask = NetworkHandler.DownloadStandDll(Program.CurrentStandDllVersion, Path.Combine(download_folder, $"Stand_{Program.CurrentStandDllVersion}.dll"), true);
                             downloadTask.Wait();
