@@ -42,6 +42,7 @@ namespace StandCLI
             var osver = Environment.OSVersion;
             var version = osver.Version;
             var cutver = version.ToString().Substring(0,4);
+            int fckups = 0;
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
             logfile = new(Path.Combine(StandCLIFolder, "logs.txt"));
 
@@ -55,16 +56,47 @@ namespace StandCLI
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
             logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
-            logfile.Log("StandCLI's goodies will be stored on: " + StandCLIFolder);
-            logfile.Log("Stand's goodies are in: " + StandFolder);
-            logfile.Log("Stand's DLLs will be stored in: " + StandBinFolder);
-            if(cutver != "10.0")
+            if(StandCLIFolder != null)
             {
-                logfile.Log("Windows version " + cutver + " is ancient! there might be issues using it.");
+            logfile.Log("StandCLI's goodies will be stored on: " + StandCLIFolder);
             }
             else
             {
-                logfile.Log("Windows version is: " + cutver + ". Good!"); 
+                fckups =+ 1;
+            }
+            if(StandFolder != null)
+            {
+            logfile.Log("Stand's goodies are in: " + StandFolder);
+            }
+            else
+            {
+                fckups =+ 1;
+            }
+            if(StandBinFolder != null)
+            {
+                logfile.Log("Stand's DLLs will be stored in: " + StandBinFolder);
+            }
+            else
+            {
+                fckups =+ 1;
+            }
+            if(cutver != "10.0")
+            {
+                fckups += 1;
+                logfile.Log("Windows version " + cutver + " is ancient! there might be issues using it.");
+                logfile.Log("Some errors occured while initializing. Errors: " + fckups);
+            }
+            else
+            {
+                logfile.Log("Windows version is: " + cutver + ". Good!");
+                if(fckups == 0)
+                {
+                logfile.Log("Everything seems to be correct!");
+                }
+                else
+                {
+                    logfile.Log("Some errors occured while initializing. Errors: " + fckups);
+                }
             }
             LauncherCreation.RunningAsLauncher();
 
