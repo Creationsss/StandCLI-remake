@@ -39,67 +39,29 @@ namespace StandCLI
         static void Main(string[] args)
         {
             RuntimeHandler.StartElapsedTime();
-            var osver = Environment.OSVersion;
-            var version = osver.Version;
-            var cutver = version.ToString().Substring(0,4);
-            int fckups = 0;
+
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
             logfile = new(Path.Combine(StandCLIFolder, "logs.txt"));
+
+            LauncherCreation.RunningAsLauncher();
 
             string[]? StandVersions = NetworkHandler.GetLatestStandVersion().Result;
             if (StandVersions == null)
             {
-                Console.WriteLine("StandCLI", "Failed to get latest stand version, exiting...");
+                Console.WriteLine("Failed to get latest stand version, exiting...");
                 Thread.Sleep(5000);
                 Environment.Exit(0);
             }
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
-            logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
-            if(StandCLIFolder != null)
-            {
-            logfile.Log("StandCLI's goodies will be stored on: " + StandCLIFolder);
-            }
-            else
-            {
-                fckups += 1;
-            }
-            if(StandFolder != null)
-            {
-            logfile.Log("Stand's goodies are in: " + StandFolder);
-            }
-            else
-            {
-                fckups += 1;
-            }
-            if(StandBinFolder != null)
-            {
-                logfile.Log("Stand's DLLs will be stored in: " + StandBinFolder);
-            }
-            else
-            {
-                fckups += 1;
-            }
-            if(cutver != "10.0")
-            {
-                fckups += 1;
-                logfile.Log("Windows version " + cutver + " is ancient! there might be issues using it.");
-                logfile.Log("Some errors occured while initializing. Errors: " + fckups);
-            }
-            else
-            {
-                logfile.Log("Windows version is: " + cutver + ". Good!");
-                if(fckups == 0)
-                {
-                logfile.Log("Everything seems to be correct!");
-                }
-                else
-                {
-                    logfile.Log("Some errors occured while initializing. Errors: " + fckups);
-                }
-            }
-            LauncherCreation.RunningAsLauncher();
 
+            logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
+
+            if (!string.IsNullOrEmpty(StandCLIFolder)) logfile.Log("StandCLI's goodies will be stored on: " + StandCLIFolder);
+            if (string.IsNullOrEmpty(StandFolder)) logfile.Log("Stand's goodies are in: " + StandFolder);
+            if (!string.IsNullOrEmpty(StandBinFolder)) logfile.Log("Stand's DLLs will be stored in: " + StandBinFolder);
+
+            CheckWindowsVersion();
             CheckSettings();
             Disclaimer();
             SetMenuOptions();
@@ -107,6 +69,19 @@ namespace StandCLI
             Task.Run(() => AutoInjection.AutoInject());
 
             MenuOptionsHandler.MenuOptions("MainMenu");
+        }
+
+        private static void CheckWindowsVersion()
+        {
+            OperatingSystem SystemVersion = Environment.OSVersion;
+
+            var version = SystemVersion.Version;
+            var cutver = version.ToString()[..4];
+
+            if(cutver != "10.0")
+            {
+                logfile?.Log("Windows version " + cutver + " is ancient! there might be issues using it, https://www.itconvergence.com/blog/risks-of-using-outdated-operating-system/");
+            }
         }
 
         public static string? UsingStandVersion(string? version = null, bool set = false)
