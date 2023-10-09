@@ -44,10 +44,12 @@ namespace StandCLI.handlers
 
         public static string CreateLauncher()
         {
+            Program.logfile?.Log("Checking if launcher exists already...");
             if (!CheckIfLauncherExists())
             {
                 string? gtaPath = Program.IniFile?.ReadValue("Settings", "gtaPath");
                 string? currentExeFullPath = Process.GetCurrentProcess().MainModule?.FileName;
+                Program.logfile?.Log("Checking if gta path is valid...");
 
                 if (gtaPath != null)
                 {
@@ -56,6 +58,7 @@ namespace StandCLI.handlers
                     {
                         try
                         {
+                            Program.logfile?.Log("Found: " + defaultGTAEXE);
                             File.Copy(defaultGTAEXE, Path.Combine(gtaPath, "_PlayGTAV.exe"));
                             File.Delete(defaultGTAEXE);
                             
@@ -76,8 +79,9 @@ namespace StandCLI.handlers
                                 return "Failed to copy StandCLI to GTA V folder.";
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            Program.logfile?.Log("Failed to copy StandCLI to GTA V (please open an issue on github.) Exception:" + ex.ToString());
                             return "Failed to copy StandCLI to GTA V folder.";
                         }
                     }
@@ -226,6 +230,7 @@ namespace StandCLI.handlers
                 {
                     return "GTA V path not specified.";
                 }
+
                 return "Successfully deleted StandCLI from GTA V folder.";
             }
             else
