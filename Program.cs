@@ -71,6 +71,7 @@ namespace StandCLI
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
 
+        [CatchAndLog]
         private static void CheckWindowsVersion()
         {
             OperatingSystem SystemVersion = Environment.OSVersion;

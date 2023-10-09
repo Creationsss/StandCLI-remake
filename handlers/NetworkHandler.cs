@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace StandCLI.handlers
 {
     public class NetworkHandler
@@ -30,6 +32,48 @@ namespace StandCLI.handlers
                 }
             }
         }
+
+        public static async Task<Dictionary<string, string>> ExceptionsList()
+        {
+            string url = "https://creations.works/assets/StandCLI_ErrorHandles.json";
+
+            using (HttpClient client = new())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonContent = await response.Content.ReadAsStringAsync();
+
+                        Dictionary<string, string> errorHandles = new Dictionary<string, string>
+                        {
+                            { "json", jsonContent }
+                        };
+
+                        return errorHandles;
+                    }
+                    else
+                    {
+                        return new Dictionary<string, string>
+                        {
+                            { "error", response.StatusCode.ToString() }
+                        };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Program.logfile?.Log("Error while getting supported stand versions: " + ex);
+
+                    return new Dictionary<string, string>
+                    {
+                        { "error", ex.Message }
+                    };
+                }
+            }
+        }
+
         public static async Task<string[]?> GetLatestStandVersion()
         {
             try
