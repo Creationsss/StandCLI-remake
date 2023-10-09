@@ -9,6 +9,7 @@ namespace StandCLI.handlers
             string currentName = Process.GetCurrentProcess().ProcessName;
             if (currentName == "PlayGTAV")
             {
+                DLLImports.AllocConsole();
                 if (File.Exists("_PlayGTAV.exe"))
                 {
                     string[] args = Environment.GetCommandLineArgs();
@@ -16,14 +17,13 @@ namespace StandCLI.handlers
                     args = args.Skip(1).ToArray();
 
                     string argsString = string.Join(" ", args);
+                    Program.logfile?.Log($"Running as launcher with args: {argsString}");
 
-                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    ProcessStartInfo startInfo = new()
                     {
                         FileName = "_PlayGTAV.exe",
                         Arguments = argsString,
-                        UseShellExecute = false
                     };
-
                     Process.Start(startInfo);
                 }
             }

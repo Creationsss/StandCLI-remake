@@ -31,6 +31,10 @@ namespace StandCLI.handlers
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, IntPtr dwSize, uint flAllocationType, uint flProtect);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool AllocConsole();
+
 
         public static IntPtr OpenProcessWrapper(uint dwDesiredAccess, int bInheritHandle, uint dwProcessId)
         {

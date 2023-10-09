@@ -39,7 +39,6 @@ namespace StandCLI
         static void Main(string[] args)
         {
             RuntimeHandler.StartElapsedTime();
-            LauncherCreation.RunningAsLauncher();
 
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
             logfile = new(Path.Combine(StandCLIFolder, "logs.txt"));
@@ -54,6 +53,9 @@ namespace StandCLI
             CurrentFullStandVersion = StandVersions[0];
             CurrentStandDllVersion = StandVersions[1];
             logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
+
+            LauncherCreation.RunningAsLauncher();
+
             CheckSettings();
             Disclaimer();
             SetMenuOptions();

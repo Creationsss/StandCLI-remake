@@ -226,6 +226,7 @@ namespace StandCLI.handlers
                 if (!skipReadKey) Console.ReadKey();
                 Program.ReloadFileOptions();
                 Program.ReloadStandDLLMenuOptions();
+                Program.ReloadLauncherOptions();
 
                 Console.Clear();
                 int length = ReturnLength("StandFile");
