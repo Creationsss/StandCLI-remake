@@ -6,14 +6,16 @@ namespace StandCLI.handlers
     {
         public static void RunningAsLauncher()
         {
+            
             string currentName = Process.GetCurrentProcess().ProcessName;
             if (currentName == "PlayGTAV")
             {
                 DLLImports.AllocConsole();
+                Program.logfile?.Log("Allocated console.");
                 if (File.Exists("_PlayGTAV.exe"))
                 {
+                    Program.logfile?.Log("Found launcher!");
                     string[] args = Environment.GetCommandLineArgs();
-
                     args = args.Skip(1).ToArray();
 
                     string argsString = string.Join(" ", args);
