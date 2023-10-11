@@ -74,7 +74,6 @@ namespace StandCLI
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
 
-        [CatchAndLog]
         private static void CheckWindowsVersion()
         {
             OperatingSystem SystemVersion = Environment.OSVersion;
@@ -196,29 +195,67 @@ namespace StandCLI
         public static void ReloadStandDLLMenuOptions()
         {
             StandDLLOptions = new string[] { };
+            Dictionary<string, List<string>> versionTextMap = new Dictionary<string, List<string>>();
+
             foreach (string version in SupportedStandVersions)
             {
-                string[] AddText = {};
-                if(version == CurrentStandDllVersion) AddText = AddText.Append("latest").ToArray();
+                if (!versionTextMap.ContainsKey(version))
+                {
+                    versionTextMap[version] = new List<string>();
+                }
 
+                if (version == CurrentStandDllVersion) versionTextMap[version].Insert(0, "latest");
 
                 if (File.Exists(Path.Combine(StandBinFolder, $"Stand_{version}.dll")))
                 {
-                    if (UsingStandVersion() == version) AddText = AddText.Append("using").ToArray();
-                    AddText = AddText.Append("installed").ToArray();
+                    if (UsingStandVersion() == version  && !versionTextMap[version].Contains("using")) versionTextMap[version].Insert(0, "using");
+                    versionTextMap[version].Insert(0, "installed");
                 }
-
-                string AddedText = "";
-                foreach (string text in AddText)
-                {
-                    if (text == AddText[0] && AddText.Length == 1) AddedText += $"({text})";
-                    else if (text == AddText[0]) AddedText += $"({text}, ";
-                    else if (text == AddText[AddText.Length - 1]) AddedText += text + ")";
-                    else if (text != AddText[0]) AddedText += text + ", ";
-                }
-
-                StandDLLOptions = StandDLLOptions.Append($"{version} {AddedText}").ToArray();
             }
+
+            if (StandBinFolder != "null")
+            {
+                foreach (FileInfo file in new DirectoryInfo(StandBinFolder).GetFiles())
+                {
+                    if (file.Name.StartsWith("Stand_") && file.Name.EndsWith(".dll"))
+                    {
+                        string[] splitVersion = file.Name.Split('_')[1].Split('.');
+                        string localVersion = (splitVersion[1] != "dll") ? $"{splitVersion[0]}.{splitVersion[1]}" : splitVersion[0];
+
+                        if(versionTextMap.ContainsKey(localVersion)) continue;
+
+                        if (!versionTextMap.ContainsKey(localVersion))
+                        {
+                            versionTextMap[localVersion] = new List<string>();
+                        }
+
+                        if (UsingStandVersion() == localVersion  && !versionTextMap[localVersion].Contains("using")) 
+                        {
+                            versionTextMap[localVersion].Insert(0, "using");
+                        }
+
+                        versionTextMap[localVersion].Add("installed");
+
+                        if (!SupportedStandVersions.Contains(localVersion))
+                        {
+                            versionTextMap[localVersion].Add("outdated");
+                        }
+                    }
+                }
+            }
+
+            foreach (var entry in versionTextMap)
+            {
+                string version = entry.Key;
+                List<string> addText = entry.Value;
+                string formattedText = string.Join(", ", addText);
+                if (!string.IsNullOrEmpty(formattedText))
+                {
+                    formattedText = "(" + formattedText + ")";
+                }
+                StandDLLOptions = StandDLLOptions.Append($"{version} {formattedText}").ToArray();
+            }
+
             StandDLLOptions = StandDLLOptions.Append("\nBack").ToArray();
             Menus["StandDLL"] = StandDLLOptions;
         }
