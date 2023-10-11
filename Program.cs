@@ -195,7 +195,7 @@ namespace StandCLI
         public static void ReloadStandDLLMenuOptions()
         {
             StandDLLOptions = new string[] { };
-            Dictionary<string, List<string>> versionTextMap = new Dictionary<string, List<string>>();
+            Dictionary<string, List<string>> versionTextMap = new();
 
             foreach (string version in SupportedStandVersions)
             {
