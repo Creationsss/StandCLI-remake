@@ -14,9 +14,9 @@ namespace StandCLI
             {"autoInjectDelay", "45000"}
         };
 
-        private static string[] MainMenuOptions = {};
-        private static string[] StandFileOptions = {};
-        private static string[] StandDLLOptions = {};
+        private static string[] MainMenuOptions = Array.Empty<string>();
+        private static string[] StandFileOptions = Array.Empty<string>();
+        private static string[] StandDLLOptions = Array.Empty<string>();
 
         private static Dictionary<string, object> Menus = new();
 
