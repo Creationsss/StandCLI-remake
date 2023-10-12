@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace StandCLI.handlers
+namespace StandCLI.Handlers
 {
     class RuntimeHandler
     {

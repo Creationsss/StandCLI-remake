@@ -1,5 +1,5 @@
 using System.Text.Json;
-using StandCLI.handlers;
+using StandCLI.Handlers;
 
 namespace StandCLI.Handlers
 {

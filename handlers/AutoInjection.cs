@@ -1,4 +1,4 @@
-namespace StandCLI.handlers
+namespace StandCLI.Handlers
 {
     class AutoInjection
     {

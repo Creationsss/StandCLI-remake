@@ -1,5 +1,4 @@
-﻿using StandCLI.handlers;
-using StandCLI.Handlers;
+﻿using StandCLI.Handlers;
 
 namespace StandCLI
 {

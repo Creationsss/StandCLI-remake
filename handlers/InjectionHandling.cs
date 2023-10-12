@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Security.Cryptography;
 
-namespace StandCLI.handlers
+namespace StandCLI.Handlers
 {
     class InjectMethods 
     {

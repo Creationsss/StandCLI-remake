@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace StandCLI.handlers
+namespace StandCLI.Handlers
 {
     public class NetworkHandler
     {

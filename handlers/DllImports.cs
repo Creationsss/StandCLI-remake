@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace StandCLI.handlers
+namespace StandCLI.Handlers
 {
     class DLLImports
     {

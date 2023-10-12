@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-namespace StandCLI.handlers
+namespace StandCLI.Handlers
 {
     class LauncherCreation
     {

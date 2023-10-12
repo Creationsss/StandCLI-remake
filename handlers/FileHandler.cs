@@ -1,5 +1,5 @@
 
-namespace StandCLI.handlers 
+namespace StandCLI.Handlers 
 {
     public class FolderExists
     {
