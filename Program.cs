@@ -5,7 +5,6 @@ namespace StandCLI
     class Program
     {
         public static IniFile? IniFile;
-        public static OperatingSystem? OSVersion {get;}
         public static Dictionary<string, string> Settings = new();
         private static readonly Dictionary<string, string> DefaultSettings = new()
         {
@@ -28,8 +27,8 @@ namespace StandCLI
 
         public static string[] SupportedStandVersions = NetworkHandler.SupportedStandVersion().Result;
 
-        public static string CurrentFullStandVersion = "";
-        public static string CurrentStandDllVersion = "";
+        public static string CurrentFullStandVersion = string.Empty;
+        public static string CurrentStandDllVersion = string.Empty;
 
         public static string CurrentStandCLIVersion = "2.0";
 
@@ -181,9 +180,7 @@ namespace StandCLI
                 "\nExit"
             };
 
-            ReloadFileOptions();
-            ReloadStandDLLMenuOptions();
-            ReloadLauncherOptions();
+            ReloadAllOptions();
 
             Menus.Add("MainMenu", MainMenuOptions);
         }
@@ -195,7 +192,7 @@ namespace StandCLI
 
         public static void ReloadStandDLLMenuOptions()
         {
-            StandDLLOptions = new string[] { };
+            StandDLLOptions = Array.Empty<string>();
             Dictionary<string, List<string>> versionTextMap = new();
 
             foreach (string version in SupportedStandVersions)
@@ -214,7 +211,7 @@ namespace StandCLI
                 }
             }
 
-            if (StandBinFolder != "null")
+            if (StandBinFolder != "null" && Directory.Exists(StandBinFolder))
             {
                 foreach (FileInfo file in new DirectoryInfo(StandBinFolder).GetFiles())
                 {
@@ -263,7 +260,7 @@ namespace StandCLI
 
         public static void ReloadFileOptions()
         {
-            StandFileOptions = new string[] {};
+            StandFileOptions = Array.Empty<string>();
 
             string autoInject = Settings["autoInject"] .Equals("true") ? "Auto inject: enabled" : "Auto inject: disabled";
             StandFileOptions = StandFileOptions.Append(autoInject).ToArray();
@@ -282,23 +279,22 @@ namespace StandCLI
                 StandFileOptions = StandFileOptions.Append("GTA Path: not set").ToArray();
             }
 
-            if(Directory.Exists(StandCLIFolder))
-            {
-                StandFileOptions = StandFileOptions.Append($"StandCLI Logs and Settings: {StandCLIFolder}").ToArray();
-            }
-
-            if(Directory.Exists(StandFolder))
-            {
-                StandFileOptions = StandFileOptions.Append($"Stand Folder: {StandFolder}").ToArray();
-            }
-
+            if(Directory.Exists(StandCLIFolder)) StandFileOptions = StandFileOptions.Append($"StandCLI Logs and Settings: {StandCLIFolder}").ToArray();
+            if(Directory.Exists(StandFolder)) StandFileOptions = StandFileOptions.Append($"Stand Folder: {StandFolder}").ToArray();
+            
             if (FolderExists.CheckFolderExists(StandFolder, false) != "null")
             {
                 StandFileOptions = StandFileOptions.Append("\nDelete Stand Folder").ToArray();
 
-                if (FolderExists.CheckFolderExists(StandBinFolder, false) != "null")
+                if(FolderExists.CheckFolderExists(Path.Combine(StandBinFolder, "Temp"), false) != "null")
                 {
-                    StandFileOptions = StandFileOptions.Append("Delete all stand dlls\n").ToArray();
+                    StandFileOptions = StandFileOptions.Append("Delete Stand Temp Folder").ToArray();
+                }
+
+                int length = Directory.GetFiles(StandBinFolder).Length;
+                if (FolderExists.CheckFolderExists(StandBinFolder, false) != "null" && length > 0)
+                {
+                    StandFileOptions = StandFileOptions.Append("Delete All stand versions\n").ToArray();
                     foreach (string version in SupportedStandVersions)
                     {
                         if (File.Exists(Path.Combine(StandBinFolder, $"Stand_{version}.dll")))
@@ -319,7 +315,7 @@ namespace StandCLI
             string? launcherPath = IniFile?.ReadValue("Settings", "launcherPath") ?? null;
             string? gtaPath = IniFile?.ReadValue("Settings", "gtaPath") ?? null;
 
-            string[] LauncherOptions = new string[] {};
+            string[] LauncherOptions = Array.Empty<string>();
 
             if(!LauncherCreation.CheckIfLauncherExists())
             {
@@ -335,6 +331,21 @@ namespace StandCLI
 
             LauncherOptions = LauncherOptions.Append("\nBack").ToArray();
             Menus["LauncherOptions"] = LauncherOptions;
+        }
+
+        public static bool ReloadAllOptions()
+        {
+            try
+            {
+                ReloadFileOptions();
+                ReloadStandDLLMenuOptions();
+                ReloadLauncherOptions();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

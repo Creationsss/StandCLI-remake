@@ -57,7 +57,7 @@ namespace StandCLI.Handlers
 
         private static void ResetTitle()
         {
-            Console.Title = "Stand CLI version " + Program.CurrentStandCLIVersion;
+            Console.Title = "Stand CLI Version " + Program.CurrentStandCLIVersion;
         }
 
         private static bool IsInjectionNeeded()

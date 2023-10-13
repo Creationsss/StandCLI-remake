@@ -148,7 +148,7 @@ namespace StandCLI.Handlers
                     Program.IniFile?.SetValue("Settings", "autoInject", "false");
                     skipReadKey = true;
                 }
-                else if (sv_split[0].Contains("Back"))
+                else if (sv_length[optionIndex].Contains("Back"))
                 {
                     selectedOption = 0;
                     MenuOptions("MainMenu");
@@ -196,7 +196,15 @@ namespace StandCLI.Handlers
                     Program.IniFile?.SetValue("Settings", "disclaimer", "true");
                     skipReadKey = true;
                 }
-                else if(sv_split[2].Contains("Folder"))
+                else if(sv_length[optionIndex] == "Delete Stand Temp Folder")
+                {
+                    if (FolderExists.CheckFolderExists(Path.Combine(Program.StandBinFolder, "Temp"), false) != "null")
+                    {
+                        Directory.Delete(Path.Combine(Program.StandBinFolder, "Temp"), true);
+                        Console.WriteLine("Deleted Stand Temp Folder");
+                    }
+                }
+                else if(sv_length[optionIndex] == "Delete Stand Folder")
                 {
                     if (FolderExists.CheckFolderExists(Program.StandFolder, false) != "null")
                     {
@@ -204,29 +212,29 @@ namespace StandCLI.Handlers
                         Console.WriteLine("Deleted Stand Folder");
                     }
                 }
-                else if(sv_split[1].Contains("all"))
+                else if(sv_length[optionIndex] == "Delete All stand versions\n")
                 {
                     if (FolderExists.CheckFolderExists(Program.StandBinFolder, false) != "null")
                     {
-                        Directory.Delete(Program.StandBinFolder, true);
-                        Console.WriteLine("Deleted All stand dlls");
+                        foreach (string file in Directory.GetFiles(Program.StandBinFolder, "Stand_*.dll"))
+                        {
+                            try { File.Delete(file); }
+                            catch { }
+                        }
+                        Console.WriteLine("Deleted All stand versions");
                     }
                 }
-                else{
-                    if(sv_split[0].Contains("Delete"))
+                else if(sv_length[optionIndex].StartsWith("Delete Stand DLL"))
+                {
+                    string ToDelete = Regex.Replace(sv_split[3], @"\(([^)]*)\)", "$1").Trim();
+                    if (File.Exists(Path.Combine(Program.StandBinFolder, $"Stand_{ToDelete}.dll")))
                     {
-                        String ToDelete = Regex.Replace(sv_split[3], @"\(([^)]*)\)", "$1").Trim();
-                        if (File.Exists(Path.Combine(Program.StandBinFolder, $"Stand_{ToDelete}.dll")))
-                        {
-                            File.Delete(Path.Combine(Program.StandBinFolder, $"Stand_{ToDelete}.dll"));
-                            Console.WriteLine($"Deleted Version {ToDelete}");
-                        }
+                        File.Delete(Path.Combine(Program.StandBinFolder, $"Stand_{ToDelete}.dll"));
+                        Console.WriteLine($"Deleted Version {ToDelete}");
                     }
                 }
                 if (!skipReadKey) Console.ReadKey();
-                Program.ReloadFileOptions();
-                Program.ReloadStandDLLMenuOptions();
-                Program.ReloadLauncherOptions();
+                Program.ReloadAllOptions();
 
                 Console.Clear();
                 int length = ReturnLength("StandFile");
@@ -278,8 +286,7 @@ namespace StandCLI.Handlers
                 {
                     Console.ReadKey();
                     Program.UsingStandVersion(sv_split[0], true);
-                    Program.ReloadFileOptions();
-                    Program.ReloadStandDLLMenuOptions();
+                    Program.ReloadAllOptions();
                     Console.Clear();
                     MenuOptions("StandDLL");
                 }
@@ -372,7 +379,7 @@ namespace StandCLI.Handlers
                     Console.ReadKey();
                 }
 
-                Program.ReloadLauncherOptions();
+                Program.ReloadAllOptions();
                 Console.Clear();
                 selectedOption = 0;
                 MenuOptions("LauncherOptions");
