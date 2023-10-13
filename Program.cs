@@ -24,6 +24,7 @@ namespace StandCLI
         public static string StandBinFolder = FolderExists.CheckFolderExists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Stand", "Bin"), false);
         public static string DocumentsFolder = FolderExists.CheckFolderExists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), false);
         public static string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(DocumentsFolder, "StandCLI"));
+        public static string StandCLILogFolder = FolderExists.CheckFolderExists(Path.Combine(StandCLIFolder, "logs"));
 
         public static string[] SupportedStandVersions = NetworkHandler.SupportedStandVersion().Result;
 
@@ -33,7 +34,6 @@ namespace StandCLI
         public static string CurrentStandCLIVersion = "2.0";
 
         public static bool injected = false;
-
         public static Logger? logfile;
         public static Dictionary<string, object> ErrorHandles = new();
 
@@ -42,7 +42,9 @@ namespace StandCLI
             RuntimeHandler.StartElapsedTime();
 
             IniFile = new(Path.Combine(StandCLIFolder, "settings.ini"));
-            logfile = new(Path.Combine(StandCLIFolder, "logs.txt"));
+
+            string dateTime = DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
+            logfile = new(Path.Combine(StandCLILogFolder, $"{dateTime}.log"));
 
             LauncherCreation.RunningAsLauncher();
 

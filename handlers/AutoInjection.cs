@@ -37,19 +37,19 @@ namespace StandCLI.Handlers
                             Program.IniFile?.SetValue("Settings", "standVersion", Program.CurrentStandCLIVersion);
                         }
                         int remainingSeconds = remainingMilliseconds / 1000;
-                        Console.Title = $"(AutoInject) Injecting version {standVersion} in {remainingSeconds}s";
+                        Console.Title = $"(Auto Inject) Injecting version {standVersion} in {remainingSeconds}s";
                         await Task.Delay(1000);
                     }
 
                     InjectMethods.Inject();
-                    Console.Title = "(AutoInject) Injected version " + Program.IniFile?.ReadValue("Settings", "standVersion");
+                    Console.Title = "(Auto Inject) Injected version " + Program.IniFile?.ReadValue("Settings", "standVersion");
                     await Task.Delay(5000);
                     ResetTitle();
                     return;
                 }
                 else
                 {
-                    Console.Title = "(AutoInject) Waiting for GTA5";
+                    Console.Title = "(Auto Inject) Waiting for GTA5";
                     await Task.Delay(TimeSpan.FromSeconds(5));
                 }
             }

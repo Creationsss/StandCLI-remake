@@ -6,7 +6,6 @@ namespace StandCLI.Handlers
 {
     class InjectMethods 
     {
-        private static Random random = new();
 
         private static string GenerateRandomString(int length)
         {
@@ -56,6 +55,7 @@ namespace StandCLI.Handlers
                 return "Couldn't find GTA5 process";
             }
 
+            
             IntPtr hProcess = DLLImports.OpenProcessWrapper(1082u, 1, (uint)gta_pid);
             if (hProcess != IntPtr.Zero)
             {
@@ -124,6 +124,7 @@ namespace StandCLI.Handlers
                     }
 
                     Program.injected = true;
+                    GtaProcHandler.AutoResetInjection(gta_pid);
                     return $"Injected version {stand_vers}";
                 }
                 finally
