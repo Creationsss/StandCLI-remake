@@ -258,6 +258,13 @@ namespace StandCLI
             Menus["StandDLL"] = StandDLLOptions;
         }
 
+        public static void ClearCurrentLine()
+        {
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+        }
+
         public static void ReloadFileOptions()
         {
             StandFileOptions = Array.Empty<string>();
@@ -268,8 +275,17 @@ namespace StandCLI
             string? ShowDisclaimer = (IniFile?.ReadValue("Settings", "disclaimer")?.Equals("true") ?? false) ? "Show disclaimer: enabled\n" : "Show disclaimer: disabled\n";
             StandFileOptions = StandFileOptions.Append(ShowDisclaimer).ToArray();
 
-            string? gtaPath = IniFile?.ReadValue("Settings", "gtaPath") ?? null;
+            string? autoInjectDelay = IniFile?.ReadValue("Settings", "autoInjectDelay") ?? null;
+            if (autoInjectDelay != null)
+            {
+                StandFileOptions = StandFileOptions.Append($"Auto inject delay: {autoInjectDelay}ms\n").ToArray();
+            }
+            else
+            {
+                StandFileOptions = StandFileOptions.Append("Auto inject delay: 45000ms\n").ToArray();
+            }
 
+            string? gtaPath = IniFile?.ReadValue("Settings", "gtaPath") ?? null;
             if (gtaPath != null)
             {
                 StandFileOptions = StandFileOptions.Append($"GTA Path: {gtaPath}").ToArray();

@@ -69,9 +69,47 @@ namespace StandCLI.Handlers
                     }
                 }
 
-            } while (key != ConsoleKey.Escape && key != ConsoleKey.Q);
+            } while (key != ConsoleKey.Escape && key != ConsoleKey.Q && key != ConsoleKey.LeftArrow && key != ConsoleKey.RightArrow);
 
-            if (key == ConsoleKey.Escape)
+            if (key == ConsoleKey.LeftArrow)
+            {
+                string CurrentOption = MenuPicked[selectedOption];
+                if(CurrentOption.StartsWith("Auto inject delay:"))
+                {
+                    string[] sv_split = CurrentOption.Split(":");
+                    int delay = int.Parse(sv_split[1].Replace("ms", "").Trim());
+                    delay -= 1000;
+                    Program.IniFile?.SetValue("Settings", "autoInjectDelay", delay.ToString());
+                    Program.ReloadFileOptions();
+                    Console.Clear();
+                    MenuOptions("StandFile");
+                }
+                else 
+                {
+                    Console.Clear();
+                    MenuOptions(CurrentMenu);
+                }
+            }
+            else if (key == ConsoleKey.RightArrow)
+            {
+                string CurrentOption = MenuPicked[selectedOption];
+                if(CurrentOption.StartsWith("Auto inject delay:"))
+                {
+                    string[] sv_split = CurrentOption.Split(":");
+                    int delay = int.Parse(sv_split[1].Replace("ms", "").Trim());
+                    delay += 1000;
+                    Program.IniFile?.SetValue("Settings", "autoInjectDelay", delay.ToString());
+                    Program.ReloadFileOptions();
+                    Console.Clear();
+                    MenuOptions("StandFile");
+                }
+                else 
+                {
+                    Console.Clear();
+                    MenuOptions(CurrentMenu);
+                }
+            }
+            else if (key == ConsoleKey.Escape)
             {
                 Console.Clear();
                 selectedOption = 0;
@@ -87,6 +125,11 @@ namespace StandCLI.Handlers
             else if (key == ConsoleKey.Q)
             {
                 Environment.Exit(0);
+            }
+            else
+            {
+                Console.Clear();
+                MenuOptions(CurrentMenu);
             }
 
             Console.CursorVisible = true;
