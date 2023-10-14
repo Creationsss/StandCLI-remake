@@ -32,41 +32,7 @@ namespace StandCLI.Handlers
                 }
             }
         }
-        public static async Task<Dictionary<string, object>> ExceptionsList()
-        {
-            string url = "https://creations.works/assets/StandCLI_ErrorHandles.json";
-
-            using (HttpClient client = new())
-            {
-                try
-                {
-                    HttpResponseMessage response = await client.GetAsync(url);
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string jsonContent = await response.Content.ReadAsStringAsync();
-                        Dictionary<string, object> errorHandles = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonContent) ?? new Dictionary<string, object>();
-                        return errorHandles;
-                    }
-                    else
-                    {
-                        return new Dictionary<string, object>
-                        {
-                            { "error", response.StatusCode.ToString() }
-                        };
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Program.logfile?.Log("Error while getting supported stand versions: " + ex);
-
-                    return new Dictionary<string, object>
-                    {
-                        { "error", ex.Message }
-                    };
-                }
-            }
-        }
+        
         public static async Task<string[]?> GetLatestStandVersion()
         {
             try

@@ -69,7 +69,6 @@ namespace StandCLI
             SetMenuOptions();
 
             Task.Run(() => AutoInjection.AutoInject());
-            Task.Run(() => ExceptionHandler.InitializeErrorHandles()).Wait();
 
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
