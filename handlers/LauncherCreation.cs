@@ -59,6 +59,13 @@ namespace StandCLI.Handlers
                 if (gtaPath != null)
                 {
                     string defaultGTAEXE = Path.Combine(gtaPath, "PlayGTAV.exe");
+                    
+                    if(File.Exists(Path.Combine(gtaPath, "_PlayGTAV.exe")))
+                    {
+                        ReinstallLauncher();
+                        return "Launcher already exists, reinstalling...";
+                    }
+
                     if (File.Exists(defaultGTAEXE))
                     {
                         try
