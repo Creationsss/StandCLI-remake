@@ -197,6 +197,33 @@ namespace StandCLI.Handlers
                     MenuOptions("MainMenu");
                     return;
                 }
+
+                else if(sv_length[optionIndex].StartsWith("Auto inject delay:"))
+                {
+                    string[] local_split = sv_length[optionIndex].Split(":");
+                    int delay = int.Parse(local_split[1].Replace("ms", "").Trim());
+
+                    Console.Clear();
+                    Console.WriteLine("Please enter the new delay in milliseconds:\n");
+
+                    string? newDelay = Console.ReadLine();
+                    if (string.IsNullOrWhiteSpace(newDelay) || !int.TryParse(newDelay, out int newDelayInt))
+                    {
+                        Console.WriteLine("You did not enter a valid delay.");
+                        Console.ReadKey();
+                        return;
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"Set delay to {newDelayInt}ms");
+                        Console.ReadKey();
+                    }
+
+                    Program.IniFile?.SetValue("Settings", "autoInjectDelay", newDelayInt.ToString());
+                    Program.ReloadFileOptions();
+                    skipReadKey = true;
+                }
                 else if(sv_length[optionIndex].StartsWith("GTA Path:"))
                 {
                     Console.Clear();
