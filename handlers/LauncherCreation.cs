@@ -182,19 +182,16 @@ namespace StandCLI.Handlers
                         }
                         else
                         {
-                            Program.logfile?.Log("GTA path doesnt exist! (or isnt valid)");
                             return "GTA V path not specified.";
                         }
                     }
                     else
                     {
-                        Program.logfile?.Log("Launcher could not be found! (does the path not exist?)");
                         return "Launcher not found.";
                     }
                 }
                 else
-                {
-                    Program.logfile?.Log("GTA path is not set. please set it before doing this!");
+                {                                   
                     return "GTA V path not specified.";
                 }
                 return "Successfully reinstalled StandCLI to GTA V folder.";
@@ -242,25 +239,21 @@ namespace StandCLI.Handlers
                             }
                             else
                             {
-                                Program.logfile?.Log("Could not find the original launcher!");
                                 return "Launcher not found.";
                             }
                         }
                         else
                         {
-                            Program.logfile?.Log("GTA path doesnt exist! (or isnt valid)");
                             return "GTA V path not specified.";
                         }
                     }
                     else
                     {
-                        Program.logfile?.Log("Launcher could not be found! (does the path not exist?)");
                         return "Launcher not found.";
                     }
                 }
                 else
                 {
-                    Program.logfile?.Log("GTA path is not set. please set it before doing this!");
                     return "GTA V path not specified.";
                 }
 
