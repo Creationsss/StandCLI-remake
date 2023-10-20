@@ -41,13 +41,6 @@ mcs -unsafe Program.cs
 ./build.sh -w
 ```
 
-## Usage
-    Follow the on-screen instructions to perform various actions:
-        Install or reinstall the "Stand" DLL.
-        Inject the "Stand" DLL into the GTA V game process.
-        Create a launcher for GTA V.
-        View logs and error messages.
-        Delete "Stand" files.
 
 ## Contributing
 
