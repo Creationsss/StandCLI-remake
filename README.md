@@ -36,12 +36,14 @@ mcs -unsafe Program.cs
 
 > Alternatively, you can use the included script for Linux to build and run it, you need dotnet installed. To run it with Wine, use the -w option:
 
+> You can also easily build it on windows by just running the windows-build.bat, -c and -r are the options
+
 ```bash
 ./linux-build.sh -w
 ```
 ## Usage
 
-- Use the arrow keys to navigate the manu, in some options left and right arrow keys can be used to modify values
+- Use the arrow keys to navigate the menu, in some options left and right arrow keys can be used to modify values
 
 
 ## Contributing
