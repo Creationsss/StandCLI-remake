@@ -1,12 +1,10 @@
-using System.Text.Json;
-
 namespace StandCLI.Handlers
 {
     public class NetworkHandler
     {
         public static async Task<string[]> SupportedStandVersion()
         {
-            string url = "https://creations.works/assets/StandCLI_Supported.txt";
+            string url = "https://stand.gg/stand-versions.txt";
 
             using (HttpClient client = new())
             {
