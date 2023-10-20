@@ -73,7 +73,7 @@ namespace StandCLI
             MenuOptionsHandler.MenuOptions("MainMenu");
         }
 
-        private static void CheckWindowsVersion()
+        public static string CheckWindowsVersion()
         {
             OperatingSystem SystemVersion = Environment.OSVersion;
 
@@ -84,6 +84,7 @@ namespace StandCLI
             {
                 logfile?.Log("Windows version " + cutver + " is ancient! there might be issues using it, https://www.itconvergence.com/blog/risks-of-using-outdated-operating-system/");
             }
+            return cutver;
         }
 
         public static string? UsingStandVersion(string? version = null, bool set = false)
