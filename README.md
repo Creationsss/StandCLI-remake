@@ -11,10 +11,9 @@ Inject Stand's DLL into GTA V using this command-line interface. This tool allow
 ## Features
 
 - Inject the "Stand" DLL into the GTA V game process.
-- Easily install and reinstall the "Stand" DLL.
+- Choose what version of supported stand version you want to use
 - Create a GTA V launcher. (Automatically launches StandCLI on startup of game)
 - Monitor logs and error messages.
-- Remove "Stand" files.
 
 ## Prerequisites
 
@@ -38,7 +37,7 @@ mcs -unsafe Program.cs
 > Alternatively, you can use the included script for Linux to build and run it, you need dotnet installed. To run it with Wine, use the -w option:
 
 ```bash
-./build.sh -w
+./linux-build.sh -w
 ```
 
 
