@@ -173,6 +173,7 @@ namespace StandCLI.Handlers
             catch (Exception ex)
             {
                 Console.WriteLine($"Error occurred while logging: {ex.Message}");
+                Console.WriteLine($"Please report this on github! this isnt meant to happen");
             }
         }
     }
