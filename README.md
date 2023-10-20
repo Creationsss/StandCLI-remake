@@ -39,6 +39,9 @@ mcs -unsafe Program.cs
 ```bash
 ./linux-build.sh -w
 ```
+## Usage
+
+- Use the arrow keys to navigate the manu, in some options left and right arrow keys can be used to modify values
 
 
 ## Contributing

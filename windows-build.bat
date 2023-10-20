@@ -1,6 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
+REM windows-build.bat -c copys the executable file next to the script
+REM windows-build.bat -r run the executable file
+
 set "current_folder=%cd%"
 set "dotnet_publish_command=dotnet publish StandCLI.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true"
 set "publish_folder=%current_folder%\bin\Release\net6.0\win-x64\publish"
