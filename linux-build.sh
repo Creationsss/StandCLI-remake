@@ -5,7 +5,7 @@
 
 current_folder="$(pwd)"
 script_name="$0" 
-dotnet_publish_command="dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true"
+dotnet_publish_command="dotnet publish StandCLI.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true"
 dotnet_publish_output=$($dotnet_publish_command)
 
 if [ $? -eq 0 ]; then
