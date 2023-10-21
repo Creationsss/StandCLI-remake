@@ -6,7 +6,7 @@ namespace StandCLI.Handlers
     public partial class MenuOptionsHandler
     {
         private static int selectedOption = 0;
-        public static string CurrentMenu = String.Empty;
+        public static string CurrentMenu = string.Empty;
 
         public static void MenuOptions(string Option)
         {
@@ -168,6 +168,15 @@ namespace StandCLI.Handlers
             }
         }
 
+        private static bool ToggleIniSetting(string section, string key)
+        {
+            string currentValue = Program.IniFile?.ReadValue(section, key) ?? "true";
+            bool isTrue = currentValue == "true";
+            bool toggledValue = !isTrue;
+            Program.IniFile?.SetValue(section, key, toggledValue ? "true" : "false");
+            return toggledValue;
+        }
+
         public static void HandleStandFileMenuOptions(int optionIndex)
         {
             Console.Clear();
@@ -178,33 +187,38 @@ namespace StandCLI.Handlers
             if (optionIndex >= 0 && optionIndex < sv_length.Length)
             {
                 string[] sv_split = sv_length[optionIndex].Split(" ");
-                if (sv_length[optionIndex] == "Auto inject: disabled")
-                {
-                    Program.Settings["autoInject"] = "true";
-                    Program.IniFile?.SetValue("Settings", "autoInject", "true");
-                    Task.Run(() => AutoInjection.AutoInject());
-                    skipReadKey = true;
-                }
-                else if (sv_length[optionIndex] == "Auto inject: enabled")
-                {
-                    Program.Settings["autoInject"] = "false";
-                    Program.IniFile?.SetValue("Settings", "autoInject", "false");
-                    skipReadKey = true;
-                }
-                else if (sv_length[optionIndex].Contains("Back"))
+                string CurrentOption = sv_length[optionIndex].Replace("\n", String.Empty);
+
+                if (CurrentOption.Contains("Back"))
                 {
                     selectedOption = 0;
                     MenuOptions("MainMenu");
                     return;
                 }
-
-                else if(sv_length[optionIndex].StartsWith("Auto inject delay:"))
+                else if(CurrentOption.StartsWith("Auto inject:"))
                 {
-                    string[] local_split = sv_length[optionIndex].Split(":");
+                    bool toggle = ToggleIniSetting("Settings", "autoInject");
+                    if(toggle) Task.Run(() => AutoInjection.AutoInject());
+                    Program.Settings["autoInject"] = toggle.ToString().ToLower();
+                    skipReadKey = true;
+                }
+                else if (CurrentOption.StartsWith("Show disclaimer:"))
+                {
+                    ToggleIniSetting("Settings", "disclaimer");
+                    skipReadKey = true;
+                }
+                else if (CurrentOption.StartsWith("Confirm options:"))
+                {
+                    ToggleIniSetting("Settings", "confirmOptions");
+                    skipReadKey = true;
+                }
+                else if(CurrentOption.StartsWith("Auto inject delay:"))
+                {
+                    string[] local_split = CurrentOption.Split(":");
                     int delay = int.Parse(local_split[1].Replace("ms", String.Empty).Trim());
 
                     Console.Clear();
-                    Console.WriteLine("Please enter the new delay in milliseconds:\n");
+                    Console.WriteLine("Please enter the new delay in milliseconds:");
 
                     string? newDelay = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(newDelay) || !int.TryParse(newDelay, out int newDelayInt))
@@ -224,10 +238,10 @@ namespace StandCLI.Handlers
                     Program.ReloadFileOptions();
                     skipReadKey = true;
                 }
-                else if(sv_length[optionIndex].StartsWith("GTA Path:"))
+                else if(CurrentOption.StartsWith("GTA Path:"))
                 {
                     Console.Clear();
-                    Console.WriteLine("Please enter the Grand Theft Auto V path:\n");
+                    Console.WriteLine("Please enter the Grand Theft Auto V path:");
                     string? gtaPath = Console.ReadLine();
                     if (string.IsNullOrWhiteSpace(gtaPath))
                     {
@@ -242,48 +256,41 @@ namespace StandCLI.Handlers
                         }
                         else 
                         {
-                            Console.WriteLine("\nThe path you entered does not exist.");
+                            Console.WriteLine("The path you entered does not exist.");
                         }
                     }
                 }
-                else if (sv_length[optionIndex].StartsWith("StandCLI Logs and Settings:"))
+                else if (CurrentOption.StartsWith("StandCLI Logs and Settings:"))
                 {
                     Process.Start("explorer.exe", Program.StandCLIFolder);
                     skipReadKey = true;
                 }
-                else if(sv_length[optionIndex].StartsWith("Stand Folder:"))
+                else if(CurrentOption.StartsWith("Stand Folder:"))
                 {
                     Process.Start("explorer.exe", Program.StandFolder);
                     skipReadKey = true;
                 }
-                else if (sv_length[optionIndex] == "Show disclaimer: enabled\n")
+                else if(CurrentOption == "Delete Stand Temp Folder")
                 {
-                    Program.IniFile?.SetValue("Settings", "disclaimer", "false");
-                    skipReadKey = true;
-                }
-                else if (sv_length[optionIndex] == "Show disclaimer: disabled\n")
-                {
-                    Program.IniFile?.SetValue("Settings", "disclaimer", "true");
-                    skipReadKey = true;
-                }
-                else if(sv_length[optionIndex] == "Delete Stand Temp Folder")
-                {
+                    if(!ConfirmOption("delete the stand temp folder")) return;
                     if (FolderExists.CheckFolderExists(Path.Combine(Program.StandBinFolder, "Temp"), false) != "null")
                     {
                         Directory.Delete(Path.Combine(Program.StandBinFolder, "Temp"), true);
                         Console.WriteLine("Deleted Stand Temp Folder");
                     }
                 }
-                else if(sv_length[optionIndex] == "Delete Stand Folder")
+                else if(CurrentOption == "Delete Stand Folder")
                 {
+                    if(!ConfirmOption("delete the stand folder")) return;
                     if (FolderExists.CheckFolderExists(Program.StandFolder, false) != "null")
                     {
                         Directory.Delete(Program.StandFolder, true);
                         Console.WriteLine("Deleted Stand Folder");
                     }
                 }
-                else if(sv_length[optionIndex] == "Delete All stand versions\n")
+                else if(CurrentOption == "Delete All stand versions")
                 {
+                    if(!ConfirmOption("delete all stand versions")) return;
                     if (FolderExists.CheckFolderExists(Program.StandBinFolder, false) != "null")
                     {
                         foreach (string file in Directory.GetFiles(Program.StandBinFolder, "Stand_*.dll"))
@@ -294,9 +301,10 @@ namespace StandCLI.Handlers
                         Console.WriteLine("Deleted All stand versions");
                     }
                 }
-                else if(sv_length[optionIndex].StartsWith("Delete Stand DLL"))
+                else if(CurrentOption.StartsWith("Delete Stand DLL"))
                 {
                     string ToDelete = Regex.Replace(sv_split[3], @"\(([^)]*)\)", "$1").Trim();
+                    if(!ConfirmOption($"delete Stand {ToDelete}")) return;
                     if (File.Exists(Path.Combine(Program.StandBinFolder, $"Stand_{ToDelete}.dll")))
                     {
                         File.Delete(Path.Combine(Program.StandBinFolder, $"Stand_{ToDelete}.dll"));
@@ -319,6 +327,24 @@ namespace StandCLI.Handlers
                 Console.WriteLine("Invalid option index.");
                 Console.ReadKey();
             }
+        }
+
+        public static bool ConfirmOption(string Option)
+        {
+            string ConfirmOptions = Program.IniFile?.ReadValue("Settings", "confirmOptions") ?? "true";
+            if(ConfirmOptions == "false") return true;
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"Are you sure you want to {Option}?");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Press y to confirm or any other key to cancel\n");
+            Console.ResetColor();
+            Console.CursorVisible = true;
+            ConsoleKey key = Console.ReadKey(true).Key;
+            Console.Clear();
+            Console.CursorVisible = false;
+            return key.ToString().ToLower() == "y";
         }
 
         public static int ReturnLength(string Option)
@@ -396,7 +422,7 @@ namespace StandCLI.Handlers
                     Console.Clear();
                     if(gtaPath == null || !Directory.Exists(gtaPath))
                     {
-                        Console.WriteLine("Please enter the Grand Theft Auto V path:\n");
+                        Console.WriteLine("Please enter the Grand Theft Auto V path:");
                         gtaPath = Console.ReadLine();
                     }
 
@@ -431,6 +457,7 @@ namespace StandCLI.Handlers
                 }
                 else if(option.Equals("Reinstall Launcher"))
                 {
+                    if(!ConfirmOption("reinstall the launcher")) return;
                     string ReinstallLauncher = LauncherCreation.ReinstallLauncher();
 
                     Console.Clear();
@@ -440,6 +467,7 @@ namespace StandCLI.Handlers
                 }
                 else if(option.Equals("Delete Launcher"))
                 {
+                    if(!ConfirmOption("delete the launcher")) return;
                     string DeleteLauncher = LauncherCreation.DeleteLauncher();
                     Program.IniFile?.DeleteValue("Settings", "launcherPath");
 

@@ -10,6 +10,7 @@ namespace StandCLI
         {
             {"disclaimer", "true"},
             {"autoInject", "false"},
+            {"confirmOptions", "true"},
             {"autoInjectDelay", "45000"}
         };
 
@@ -271,8 +272,11 @@ namespace StandCLI
             string autoInject = Settings["autoInject"] .Equals("true") ? "Auto inject: enabled" : "Auto inject: disabled";
             StandFileOptions = StandFileOptions.Append(autoInject).ToArray();
 
-            string? ShowDisclaimer = (IniFile?.ReadValue("Settings", "disclaimer")?.Equals("true") ?? false) ? "Show disclaimer: enabled\n" : "Show disclaimer: disabled\n";
+            string? ShowDisclaimer = (IniFile?.ReadValue("Settings", "disclaimer")?.Equals("true") ?? false) ? "Show disclaimer: enabled" : "Show disclaimer: disabled";
             StandFileOptions = StandFileOptions.Append(ShowDisclaimer).ToArray();
+
+            string? ConfirmOptions = (IniFile?.ReadValue("Settings", "confirmOptions")?.Equals("true") ?? false) ? "Confirm options: enabled\n" : "Confirm options: disabled\n";
+            StandFileOptions = StandFileOptions.Append(ConfirmOptions).ToArray();
 
             string? autoInjectDelay = IniFile?.ReadValue("Settings", "autoInjectDelay") ?? null;
             if (autoInjectDelay != null)
