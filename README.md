@@ -41,7 +41,7 @@ mcs -unsafe Program.cs
 
 > You can also easily build it on windows by just running the windows-build.bat, -c and -r are the options
 ```bash
-    windows-build.bat -r
+windows-build.bat -r
 ```
 
 ## Usage
