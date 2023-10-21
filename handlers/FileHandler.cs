@@ -18,18 +18,6 @@ namespace StandCLI.Handlers
         }
     }
 
-    public class FileExists
-    {
-        public static bool CheckFileExists(string filePath)
-        {
-            if (File.Exists(filePath))
-            {
-                return true;
-            }
-            return false;
-        }
-    }
-
     public class IniFile
     {
         private readonly string filePath;

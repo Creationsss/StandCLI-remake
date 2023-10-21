@@ -7,12 +7,6 @@ namespace StandCLI.Handlers
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr OpenProcess(uint dwDesiredAccess, int bInheritHandle, uint dwProcessId);
 
-        [DllImport("ntdll.dll")]
-        private static extern IntPtr MyGetModuleHandle(string moduleName);
-
-        [DllImport("ntdll.dll")]
-        private static extern IntPtr MyGetProcAddress(IntPtr hModule, string procName);
-
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern IntPtr GetProcAddress(IntPtr hModule, string lpProcName);
 
@@ -39,16 +33,6 @@ namespace StandCLI.Handlers
         public static IntPtr OpenProcessWrapper(uint dwDesiredAccess, int bInheritHandle, uint dwProcessId)
         {
             return OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
-        }
-
-        public static IntPtr MyGetModuleHandleWrapper(string moduleName)
-        {
-            return MyGetModuleHandle(moduleName);
-        }
-
-        public static IntPtr MyGetProcAddressWrapper(IntPtr hModule, string procName)
-        {
-            return MyGetProcAddress(hModule, procName);
         }
 
         public static IntPtr GetProcAddressWrapper(IntPtr hModule, string lpProcName)

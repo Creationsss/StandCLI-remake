@@ -32,7 +32,7 @@ namespace StandCLI.Handlers
                             return;
                         }
                         string? standVersion = Program.IniFile?.ReadValue("Settings", "standVersion");
-                        if(standVersion == null || standVersion == "")
+                        if(string.IsNullOrEmpty(standVersion))
                         {
                             Program.IniFile?.SetValue("Settings", "standVersion", Program.CurrentStandCLIVersion);
                         }

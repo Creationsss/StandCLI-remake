@@ -6,7 +6,7 @@ namespace StandCLI.Handlers
     public partial class MenuOptionsHandler
     {
         private static int selectedOption = 0;
-        public static string CurrentMenu = "";
+        public static string CurrentMenu = String.Empty;
 
         public static void MenuOptions(string Option)
         {
@@ -77,7 +77,7 @@ namespace StandCLI.Handlers
                 if(CurrentOption.StartsWith("Auto inject delay:"))
                 {
                     string[] sv_split = CurrentOption.Split(":");
-                    int delay = int.Parse(sv_split[1].Replace("ms", "").Trim());
+                    int delay = int.Parse(sv_split[1].Replace("ms", String.Empty).Trim());
                     delay -= 1000;
                     Program.IniFile?.SetValue("Settings", "autoInjectDelay", delay.ToString());
                     Program.ReloadFileOptions();
@@ -96,7 +96,7 @@ namespace StandCLI.Handlers
                 if(CurrentOption.StartsWith("Auto inject delay:"))
                 {
                     string[] sv_split = CurrentOption.Split(":");
-                    int delay = int.Parse(sv_split[1].Replace("ms", "").Trim());
+                    int delay = int.Parse(sv_split[1].Replace("ms", String.Empty).Trim());
                     delay += 1000;
                     Program.IniFile?.SetValue("Settings", "autoInjectDelay", delay.ToString());
                     Program.ReloadFileOptions();
@@ -201,7 +201,7 @@ namespace StandCLI.Handlers
                 else if(sv_length[optionIndex].StartsWith("Auto inject delay:"))
                 {
                     string[] local_split = sv_length[optionIndex].Split(":");
-                    int delay = int.Parse(local_split[1].Replace("ms", "").Trim());
+                    int delay = int.Parse(local_split[1].Replace("ms", String.Empty).Trim());
 
                     Console.Clear();
                     Console.WriteLine("Please enter the new delay in milliseconds:\n");
@@ -420,7 +420,7 @@ namespace StandCLI.Handlers
                 else if(option.StartsWith("Launcher Path:"))
                 {
                     string launcherPath = Program.IniFile?.ReadValue("Settings", "launcherPath") ?? "null";
-                    launcherPath = launcherPath.Replace("\\PlayGTAV.exe", "");
+                    launcherPath = launcherPath.Replace("\\PlayGTAV.exe", String.Empty);
                     if (launcherPath == "null")
                     {
                         Console.WriteLine("Launcher path not found.");

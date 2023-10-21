@@ -34,7 +34,6 @@ namespace StandCLI
 
         public static bool injected = false;
         public static Logger? logfile;
-        public static Dictionary<string, object> ErrorHandles = new();
 
         static void Main(string[] args)
         {
@@ -97,7 +96,7 @@ namespace StandCLI
             }
             else{
                 string? stand_dll_ver = IniFile?.ReadValue("Settings", "standVersion");
-                if(stand_dll_ver == null || stand_dll_ver == "")
+                if(string.IsNullOrEmpty(stand_dll_ver))
                 {
                     return CurrentStandDllVersion;
                 }
@@ -339,7 +338,7 @@ namespace StandCLI
             }
             else
             {
-                if(gtaPath != null || gtaPath != "" && LauncherCreation.CheckIfLauncherExists()) LauncherOptions = LauncherOptions.Append($"Launcher Path: {launcherPath}\n").ToArray();
+                if(gtaPath != null || gtaPath != String.Empty && LauncherCreation.CheckIfLauncherExists()) LauncherOptions = LauncherOptions.Append($"Launcher Path: {launcherPath}\n").ToArray();
                 LauncherOptions = LauncherOptions.Append("Reinstall Launcher").ToArray();
                 LauncherOptions = LauncherOptions.Append("Delete Launcher").ToArray();
                 

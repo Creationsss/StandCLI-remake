@@ -2,32 +2,31 @@ namespace StandCLI.Handlers
 {
     public class NetworkHandler
     {
+
+        private static readonly string SupportedVersions = "https://stand.gg/stand-versions.txt";
+        private static readonly string LatestVersionLink = "https://stand.gg/versions.txt";
         public static async Task<string[]> SupportedStandVersion()
         {
-            string url = "https://stand.gg/stand-versions.txt";
-
-            using (HttpClient client = new())
+            using HttpClient client = new();
+            try
             {
-                try
-                {
-                    HttpResponseMessage response = await client.GetAsync(url);
+                HttpResponseMessage response = await client.GetAsync(SupportedVersions);
 
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string content = await response.Content.ReadAsStringAsync();
-                        string[] lines = content.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                        return lines;
-                    }
-                    else
-                    {
-                        return response.StatusCode.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries);
-                    }
-                }
-                catch (Exception ex)
+                if (response.IsSuccessStatusCode)
                 {
-                    Program.logfile?.Log("Error while getting Supported stand versions." + ex);
-                    return ex.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    string content = await response.Content.ReadAsStringAsync();
+                    string[] lines = content.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    return lines;
                 }
+                else
+                {
+                    return response.StatusCode.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                }
+            }
+            catch (Exception ex)
+            {
+                Program.logfile?.Log("Error while getting Supported stand versions." + ex);
+                return ex.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries);
             }
         }
         
@@ -35,9 +34,8 @@ namespace StandCLI.Handlers
         {
             try
             {
-                using HttpClient httpClient = new HttpClient();
-                string url = "https://stand.gg/versions.txt";
-                HttpResponseMessage response = await httpClient.GetAsync(url);
+                using HttpClient httpClient = new();
+                HttpResponseMessage response = await httpClient.GetAsync(LatestVersionLink);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -51,7 +49,7 @@ namespace StandCLI.Handlers
 
                         string? IniVersion = Program.IniFile?.ReadValue("Settings", "standVersion");
 
-                        if(IniVersion == "" || IniVersion == null)
+                        if(string.IsNullOrEmpty(IniVersion))
                         {
                             Program.IniFile?.SetValue("Settings", "standVersion", standDllVersion);
                         }
@@ -107,7 +105,7 @@ namespace StandCLI.Handlers
                     FolderExists.CheckFolderExists(directoryPath, true);
                 }
 
-                using (HttpClient httpClient = new HttpClient())
+                using (HttpClient httpClient = new())
                 {
                     if (!skipPrint)
                     {
@@ -122,25 +120,21 @@ namespace StandCLI.Handlers
 
                         if (totalFileSize.HasValue)
                         {
-                            using (Stream contentStream = await response.Content.ReadAsStreamAsync())
+                            using Stream contentStream = await response.Content.ReadAsStreamAsync();
+                            using FileStream fileStream = File.Create(destinationPath + ".tmp");
+                            var buffer = new byte[8192];
+                            var bytesRead = 0;
+                            var totalBytesRead = 0L;
+
+                            while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
                             {
-                                using (FileStream fileStream = File.Create(destinationPath + ".tmp"))
+                                await fileStream.WriteAsync(buffer, 0, bytesRead);
+                                totalBytesRead += bytesRead;
+                                var percentage = (double)totalBytesRead / totalFileSize.Value;
+
+                                if (!skipPrint)
                                 {
-                                    var buffer = new byte[8192];
-                                    var bytesRead = 0;
-                                    var totalBytesRead = 0L;
-
-                                    while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                                    {
-                                        await fileStream.WriteAsync(buffer, 0, bytesRead);
-                                        totalBytesRead += bytesRead;
-                                        var percentage = (double)totalBytesRead / totalFileSize.Value;
-
-                                        if (!skipPrint)
-                                        {
-                                            Console.Write($"\rProgress: {percentage:P0}".PadRight(Console.WindowWidth - 1));
-                                        }
-                                    }
+                                    Console.Write($"\rProgress: {percentage:P0}".PadRight(Console.WindowWidth - 1));
                                 }
                             }
                         }
@@ -178,10 +172,8 @@ namespace StandCLI.Handlers
             {
                 Console.WriteLine($"\nError downloading Stand DLL: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                Console.WriteLine($"Error downloading Stand DLL: {ex.ToString()}");
                 Program.logfile?.Log($"\nError downloading Stand DLL: {ex.Message}");
                 Program.logfile?.Log($"Stack Trace: {ex.StackTrace}");
-                Program.logfile?.Log($"Error downloading Stand DLL: {ex.ToString()}");
                 return false;
             }
         }
