@@ -31,7 +31,7 @@ namespace StandCLI
         public static string CurrentFullStandVersion = string.Empty;
         public static string CurrentStandDllVersion = string.Empty;
 
-        public static string CurrentStandCLIVersion = "2.0";
+        public static string CurrentStandCLIVersion = "2.1";
 
         public static bool injected = false;
         public static Logger? logfile;
