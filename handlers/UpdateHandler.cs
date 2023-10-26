@@ -4,16 +4,15 @@ namespace StandCLI.Handlers
 {
     class UpdateHandler 
     {
-        public static string HardCodedStandCLIVersion = "2.2";
 
         public static async Task<Tuple<bool, string>> CheckForUpdate()
         {
-            if(Program.Settings["updateCheck"] == "false") return Tuple.Create(false, string.Empty);
-            if(double.Parse(Program.CurrentStandCLIVersion) > double.Parse(HardCodedStandCLIVersion))
-            {
-                string[] result = await NetworkHandler.LatestGitCommit(HardCodedStandCLIVersion);
-                if(result == Array.Empty<string>()) return Tuple.Create(false, string.Empty);
+            string[] result = await NetworkHandler.LatestGitCommit();
+            if(result == Array.Empty<string>()) return Tuple.Create(false, String.Empty);
 
+            if(Program.Settings["updateCheck"] == "false") return Tuple.Create(false, string.Empty);
+            if(double.Parse(result[0]) > double.Parse(Program.CurrentStandCLIVersion))
+            {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine(result[1]);

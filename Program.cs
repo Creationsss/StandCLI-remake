@@ -29,7 +29,7 @@ namespace StandCLI
 
         public static string[] SupportedStandVersions = Array.Empty<string>();
         public static string CurrentStandDllVersion = string.Empty;
-        public static string CurrentStandCLIVersion = string.Empty;
+        public static string CurrentStandCLIVersion = "2.2";
         
         public static bool injected = false;
         public static Logger? logfile;
@@ -48,9 +48,8 @@ namespace StandCLI
             CheckSettings();
 
             SupportedStandVersions = NetworkHandler.SupportedStandVersion().Result;
-            CurrentStandCLIVersion = NetworkHandler.StandCLI_VersionCheck().Result;
-
             Task<Tuple<bool, string>> task = Task.Run(() => UpdateHandler.CheckForUpdate());
+            
             task.Wait();
             bool result = task.Result.Item1;
 
