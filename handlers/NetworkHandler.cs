@@ -1,10 +1,54 @@
+using System.Text.Json;
+using System.Text.RegularExpressions;
+
 namespace StandCLI.Handlers
 {
     public class NetworkHandler
     {
 
         private static readonly string SupportedVersions = "https://stand.gg/stand-versions.txt";
-        private static readonly string LatestVersionLink = "https://stand.gg/versions.txt";
+        private static readonly string StandCLI_Version = "https://creations.works/assets/StandCLI_version.txt";
+        private static readonly string GithubApiLink = "https://api.github.com/repos/Creationsss/StandCLI-remake/releases";
+
+        public static async Task<string[]> LatestGitCommit(string hardcoded)
+        {
+            HttpClient client = new();
+            client.DefaultRequestHeaders.Add("User-Agent", "C# App");
+
+            var response = await client.GetAsync(GithubApiLink);
+            if (!response.IsSuccessStatusCode)
+            {
+                return Array.Empty<string>();
+            }
+
+            var stringResponse = await response.Content.ReadAsStringAsync();
+            using JsonDocument document = JsonDocument.Parse(stringResponse);
+            JsonElement root = document.RootElement;
+            JsonElement latestRelease = root[0];
+
+            string TagName = latestRelease.GetProperty("tag_name").GetString() ?? string.Empty;
+            if (TagName == hardcoded) return Array.Empty<string>();
+
+            string rawChangeLog = latestRelease.GetProperty("body").GetString()?.Replace("\r\n", "\n").Replace("#", string.Empty).Replace("Changelog", string.Empty) ?? string.Empty;
+            string ChangeLog = Regex.Replace(rawChangeLog, @"^\s+", "", RegexOptions.Multiline);
+
+            JsonElement assetsArray = latestRelease.GetProperty("assets");
+            string downloadUrl = string.Empty;
+
+            for (int i = 0; i < assetsArray.GetArrayLength(); i++)
+            {
+                JsonElement asset = assetsArray[i];
+                string? name = asset.GetProperty("name").GetString();
+                if (name != null && name.EndsWith(".exe"))
+                {
+                    downloadUrl = asset.GetProperty("browser_download_url").GetString() ?? string.Empty;
+                    break;
+                }
+            }
+
+            return new[] { TagName, ChangeLog, downloadUrl };
+        }
+
         public static async Task<string[]> SupportedStandVersion()
         {
             using HttpClient client = new();
@@ -26,57 +70,37 @@ namespace StandCLI.Handlers
             catch (Exception ex)
             {
                 Program.logfile?.Log("Error while getting Supported stand versions." + ex);
-                return ex.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                Console.WriteLine("Failed to get supported stand versions Exiting...");
+                Thread.Sleep(5000);
+                Environment.Exit(0);
+                return new string[] { "Error" };
             }
         }
-        
-        public static async Task<string[]?> GetLatestStandVersion()
+
+        public static async Task<string> StandCLI_VersionCheck()
         {
+            using HttpClient client = new();
             try
             {
-                using HttpClient httpClient = new();
-                HttpResponseMessage response = await httpClient.GetAsync(LatestVersionLink);
+                HttpResponseMessage response = await client.GetAsync(StandCLI_Version);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string responseContent = await response.Content.ReadAsStringAsync();
-                    string[] versionInfo = responseContent.Split(':');
-
-                    if (versionInfo.Length >= 2)
-                    {
-                        string standFullVersion = versionInfo[0].Trim();
-                        string standDllVersion = versionInfo[1].Trim();
-
-                        string? IniVersion = Program.IniFile?.ReadValue("Settings", "standVersion");
-
-                        if(string.IsNullOrEmpty(IniVersion))
-                        {
-                            Program.IniFile?.SetValue("Settings", "standVersion", standDllVersion);
-                        }
-                        return new string[] { standFullVersion, standDllVersion };
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Invalid version data format");
-                    }
+                    string content = await response.Content.ReadAsStringAsync();
+                    return content;
                 }
                 else
                 {
-                    Program.logfile?.Log($"HTTP Error: {response.StatusCode}");
-                    Console.WriteLine($"HTTP Error: {response.StatusCode}");
+                    return response.StatusCode.ToString();
                 }
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine($"HttpRequestException: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Program.logfile?.Log("Error while getting StandCLI version." + ex);
+                return "Error";
             }
-
-            return null;
         }
+
 
         public static async Task<bool> DownloadStandDll(string standDllVersion, string destinationPath, bool skipPrint = false)
         {

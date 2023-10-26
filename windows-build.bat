@@ -26,6 +26,9 @@ if %errorlevel% equ 0 (
                 echo Executable file copied successfully.
             ) else if "%~1"=="-r" (
                 "!executable_file!"
+            ) else if "%~1"=="" (
+                echo No option provided. Running the executable...
+                "!executable_file!"
             ) else (
                 echo Invalid option: %~1
                 exit /b 1

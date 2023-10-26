@@ -207,6 +207,11 @@ namespace StandCLI.Handlers
                     ToggleIniSetting("Settings", "disclaimer");
                     skipReadKey = true;
                 }
+                else if(CurrentOption.StartsWith("Update check:"))
+                {
+                    ToggleIniSetting("Settings", "updateCheck");
+                    skipReadKey = true;
+                }
                 else if (CurrentOption.StartsWith("Confirm options:"))
                 {
                     ToggleIniSetting("Settings", "confirmOptions");

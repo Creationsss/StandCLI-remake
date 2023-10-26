@@ -11,7 +11,8 @@ namespace StandCLI
             {"disclaimer", "true"},
             {"autoInject", "false"},
             {"confirmOptions", "true"},
-            {"autoInjectDelay", "45000"}
+            {"autoInjectDelay", "45000"},
+            {"updateCheck", "true"}
         };
 
         private static string[] MainMenuOptions = Array.Empty<string>();
@@ -26,13 +27,10 @@ namespace StandCLI
         public static string StandCLIFolder = FolderExists.CheckFolderExists(Path.Combine(DocumentsFolder, "StandCLI"));
         public static string StandCLILogFolder = FolderExists.CheckFolderExists(Path.Combine(StandCLIFolder, "logs"));
 
-        public static string[] SupportedStandVersions = NetworkHandler.SupportedStandVersion().Result;
-
-        public static string CurrentFullStandVersion = string.Empty;
+        public static string[] SupportedStandVersions = Array.Empty<string>();
         public static string CurrentStandDllVersion = string.Empty;
-
-        public static string CurrentStandCLIVersion = "2.1";
-
+        public static string CurrentStandCLIVersion = string.Empty;
+        
         public static bool injected = false;
         public static Logger? logfile;
 
@@ -44,18 +42,21 @@ namespace StandCLI
 
             string dateTime = DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
             logfile = new(Path.Combine(StandCLILogFolder, $"{dateTime}.log"));
-
+            
             LauncherCreation.RunningAsLauncher();
+            
+            CheckSettings();
 
-            string[]? StandVersions = NetworkHandler.GetLatestStandVersion().Result;
-            if (StandVersions == null)
-            {
-                Console.WriteLine("Failed to get latest stand version, exiting...");
-                Thread.Sleep(5000);
-                Environment.Exit(0);
-            }
-            CurrentFullStandVersion = StandVersions[0];
-            CurrentStandDllVersion = StandVersions[1];
+            SupportedStandVersions = NetworkHandler.SupportedStandVersion().Result;
+            CurrentStandCLIVersion = NetworkHandler.StandCLI_VersionCheck().Result;
+
+            Task<Tuple<bool, string>> task = Task.Run(() => UpdateHandler.CheckForUpdate());
+            task.Wait();
+            bool result = task.Result.Item1;
+
+            if(result) UpdateHandler.Updater(task.Result.Item2);
+
+            CurrentStandDllVersion = SupportedStandVersions[0];
 
             logfile.Log("StandCLI " + CurrentStandCLIVersion + " Reporting for duty!");
 
@@ -64,7 +65,6 @@ namespace StandCLI
             if (!string.IsNullOrEmpty(StandBinFolder)) logfile.Log("Stand's DLLs will be stored in: " + StandBinFolder);
 
             CheckWindowsVersion();
-            CheckSettings();
             Disclaimer();
             SetMenuOptions();
 
@@ -258,13 +258,6 @@ namespace StandCLI
             Menus["StandDLL"] = StandDLLOptions;
         }
 
-        public static void ClearCurrentLine()
-        {
-            Console.SetCursorPosition(0, Console.CursorTop);
-            Console.Write(new string(' ', Console.WindowWidth));
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-        }
-
         public static void ReloadFileOptions()
         {
             StandFileOptions = Array.Empty<string>();
@@ -274,6 +267,9 @@ namespace StandCLI
 
             string? ShowDisclaimer = (IniFile?.ReadValue("Settings", "disclaimer")?.Equals("true") ?? false) ? "Show disclaimer: enabled" : "Show disclaimer: disabled";
             StandFileOptions = StandFileOptions.Append(ShowDisclaimer).ToArray();
+
+            string? UpdateCheck = (IniFile?.ReadValue("Settings", "updateCheck")?.Equals("true") ?? false) ? "Update check: enabled" : "Update check: disabled";
+            StandFileOptions = StandFileOptions.Append(UpdateCheck).ToArray();
 
             string? ConfirmOptions = (IniFile?.ReadValue("Settings", "confirmOptions")?.Equals("true") ?? false) ? "Confirm options: enabled\n" : "Confirm options: disabled\n";
             StandFileOptions = StandFileOptions.Append(ConfirmOptions).ToArray();
