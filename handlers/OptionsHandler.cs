@@ -427,8 +427,28 @@ namespace StandCLI.Handlers
                     Console.Clear();
                     if(gtaPath == null || !Directory.Exists(gtaPath))
                     {
-                        Console.WriteLine("Please enter the Grand Theft Auto V path:");
-                        gtaPath = Console.ReadLine();
+                        string? gtaPathCheckSteam = new FindGtaFolder().GetGtaPath();
+                        if(gtaPathCheckSteam != null)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Found GTA V path from Steam: " + gtaPathCheckSteam);
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine("Press y to confirm or any other key to enter your own\n");
+                            ConsoleKey key = Console.ReadKey(true).Key;
+                            if(key.ToString().ToLower() == "y")
+                            {
+                                gtaPath = gtaPathCheckSteam;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Please enter the Grand Theft Auto V path:");
+                                gtaPath = Console.ReadLine();
+                            }
+                        }
+                        else {
+                            Console.WriteLine("Please enter the Grand Theft Auto V path:");
+                            gtaPath = Console.ReadLine();
+                        }
                     }
 
                     if (string.IsNullOrWhiteSpace(gtaPath))

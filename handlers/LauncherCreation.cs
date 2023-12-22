@@ -7,7 +7,6 @@ namespace StandCLI.Handlers
     {
         public static void RunningAsLauncher()
         {
-            
             string currentName = Process.GetCurrentProcess().ProcessName;
             if (currentName == "PlayGTAV")
             {
