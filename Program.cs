@@ -216,8 +216,9 @@ namespace StandCLI
                 {
                     if (file.Name.StartsWith("Stand_") && file.Name.EndsWith(".dll"))
                     {
-                        string[] splitVersion = file.Name.Split('_')[1].Split('.');
-                        string localVersion = (splitVersion[1] != "dll") ? $"{splitVersion[0]}.{splitVersion[1]}" : splitVersion[0];
+                        // Split and clean the version string
+                        string[] splitVersion = file.Name.Replace("Stand_", "").Replace(".dll", "").Split('.');
+                        string localVersion = string.Join(".", splitVersion);
 
                         if(versionTextMap.ContainsKey(localVersion)) continue;
 

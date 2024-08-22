@@ -58,24 +58,27 @@ namespace StandCLI.Handlers
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    string[] lines = content.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    string[] lines = content.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        lines[i] = lines[i].Trim();
+                    }
                     return lines;
                 }
                 else
                 {
-                    return response.StatusCode.ToString().Split('\n', StringSplitOptions.RemoveEmptyEntries);
+                    return new[] { $"Error: {response.StatusCode}" };
                 }
             }
             catch (Exception ex)
             {
                 Program.logfile?.Log("Error while getting Supported stand versions." + ex);
-                Console.WriteLine("Failed to get supported stand versions Exiting...");
+                Console.WriteLine("Failed to get supported stand versions. Exiting...");
                 Thread.Sleep(5000);
-                Environment.Exit(0);
-                return new string[] { "Error" };
+                Environment.Exit(1); // Return a non-zero exit code to indicate failure.
+                return new[] { "Error" }; // This line will never be reached but is needed to satisfy the return type.
             }
         }
-
 
         public static async Task<bool> DownloadStandDll(string standDllVersion, string destinationPath, bool skipPrint = false)
         {
