@@ -75,8 +75,8 @@ namespace StandCLI.Handlers
                 Program.logfile?.Log("Error while getting Supported stand versions." + ex);
                 Console.WriteLine("Failed to get supported stand versions. Exiting...");
                 Thread.Sleep(5000);
-                Environment.Exit(1); // Return a non-zero exit code to indicate failure.
-                return new[] { "Error" }; // This line will never be reached but is needed to satisfy the return type.
+                Environment.Exit(1);
+                return new[] { "Error" };
             }
         }
 
